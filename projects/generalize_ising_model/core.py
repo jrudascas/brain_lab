@@ -80,7 +80,7 @@ def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi
 def compute_par(values):
     n = values[0].shape[-1]
     #no_flip = 100 * n ** 2
-    no_flip = 10 * n ** 2
+    no_flip = 50 * n ** 2
     avg_therm = no_flip * (1 - values[4])
 
     E, M, S, H, spin_mean = [], [], [], [], []
