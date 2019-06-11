@@ -31,7 +31,7 @@ x = x
 momentum_prob = (np.conj(momentum_wavefunction).T)@momentum_wavefunction
 
 
-animation_station(xAvg,yAvg,x,y,dx,dy)
+#animation_station(xAvg,yAvg,x,y,dx,dy)
 
 #Calculate momentum of brain state
 

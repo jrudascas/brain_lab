@@ -20,7 +20,6 @@ def process_eeg_csv(data,chanLocs):
     x = chanLocs[:, 0]
     y = chanLocs[:, 1]
 
-
     hilbertTransData = hilbert(data, axis=1)
 
     amplitude = np.abs(hilbertTransData).T
