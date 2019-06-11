@@ -18,7 +18,7 @@ def save_graph(path_output, graph):
     np.savetxt(path_output, matrix, delimiter=',', fmt=format)
 
 
-def to_save_results(temperature_parameters, J , E, M, H, S, simulated_fc, critical_temperature, path_output):
+def to_save_results(temperature_parameters, J, E, M, H, S, simulated_fc, critical_temperature, path_output):
     default_delimiter = ','
     format = '%1.5f'
 
@@ -163,26 +163,26 @@ def find_nearest(array, value):
 
 
 def dim(corr_func, r, idx_Tc):
-
     def model(r, z, p):
         return (np.exp(-r * z)) / (r ** p)
 
     z_estimateds = []
     p_estimateds = []
 
-    r = r[1:-1]
-    corr_func = corr_func[1:-1,:]
-    corr_func = corr_func[:, 1:-1]
+    n_temperatures, n_samples = corr_func.shape
+
+    r = r[1:n_samples]
+    corr_func = corr_func[1:n_temperatures, :]
+    corr_func = corr_func[:, 1:n_samples]
 
     for i in range(corr_func.shape[0]):
-        corr_func_in = corr_func[i,:]
+        corr_func_in = corr_func[i, :]
         parameters_estimated, pcov = curve_fit(model, np.nan_to_num(r), np.nan_to_num(corr_func_in), maxfev=10000)
 
         z_estimateds.append(1 / parameters_estimated[0])
         p_estimateds.append(parameters_estimated[1])
 
-    P_0_gtc = np.asarray(p_estimateds)[idx_Tc + 1:]
-    P_0_gtc_mn = np.mean(P_0_gtc)
+    P_0_gtc_mn = np.mean(p_estimateds[idx_Tc + 1:])
 
     d = (2 * P_0_gtc_mn) + 1
 
@@ -276,6 +276,7 @@ def distance_wei(G):
 
     return D, B
 
+
 def mse(a, b):
     # the 'Mean Squared Error' between the two matrix is the
     # sum of the squared difference between the two matrix;
@@ -290,4 +291,4 @@ def mse(a, b):
 
 def ks_test(A, B):
     import scipy
-    return 1/scipy.stats.ks_2samp(np.ravel(A), np.ravel(B))[0]
+    return 1 / scipy.stats.ks_2samp(np.ravel(A), np.ravel(B))[0]
