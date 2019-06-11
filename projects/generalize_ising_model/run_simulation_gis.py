@@ -1,11 +1,11 @@
+from projects.generalize_ising_model.core import generalized_ising
+from projects.generalize_ising_model.tools.utils import to_normalize, to_save_results
+import os
+from os import walk
 import time
 import numpy as np
-from generalize_ising_model.core import generalized_ising
-from os import walk
-from generalize_ising_model.ising_utils import to_normalize, to_save_results
-import os
 
-path_input = '/home/brainlab/Desktop/Rudas/Data/Ising/HCP/'
+path_input = '/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/data'
 
 default_Jij_name = 'J_ij.csv'
 simulation_name = 'hcp'

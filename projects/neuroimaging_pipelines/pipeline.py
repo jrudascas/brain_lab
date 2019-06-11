@@ -1,18 +1,18 @@
 from os.path import join as opj
 from nipype.interfaces.fsl import (BET, ExtractROI, FAST, FLIRT, MCFLIRT, SliceTimer, Threshold)
-from neuroimaging_pipelines.interfaces.ExtractConfounds import ExtractConfounds
-from neuroimaging_pipelines.interfaces.SignalExtraction import SignalExtraction
-from neuroimaging_pipelines.interfaces.ArtifacRemotion import ArtifacRemotion
-from neuroimaging_pipelines.interfaces.N4Bias import N4Bias
-from neuroimaging_pipelines.interfaces.Reslicing import Reslicing
-from neuroimaging_pipelines.interfaces.Descomposition import Descomposition
-from neuroimaging_pipelines.interfaces.ExtractB0 import ExtractB0
-from neuroimaging_pipelines.interfaces.Denoise import Denoise
-from neuroimaging_pipelines.interfaces.ModelDTI import ModelDTI
-from neuroimaging_pipelines.interfaces.Tractography import Tractography
-from neuroimaging_pipelines.interfaces.MedianOtsu import MedianOtsu
-from neuroimaging_pipelines.interfaces.Registration import Registration
-from neuroimaging_pipelines.interfaces.RegistrationAtlas import RegistrationAtlas
+from .interfaces.ExtractConfounds import ExtractConfounds
+from .interfaces.SignalExtraction import SignalExtraction
+from .interfaces.ArtifacRemotion import ArtifacRemotion
+from .interfaces.N4Bias import N4Bias
+from .interfaces.Reslicing import Reslicing
+from .interfaces.Descomposition import Descomposition
+from .interfaces.ExtractB0 import ExtractB0
+from .interfaces.Denoise import Denoise
+from .interfaces.ModelDTI import ModelDTI
+from .interfaces.Tractography import Tractography
+from .interfaces.MedianOtsu import MedianOtsu
+from .interfaces.Registration import Registration
+from .interfaces.RegistrationAtlas import RegistrationAtlas
 from nipype.interfaces.fsl import Eddy
 from nipype.interfaces.fsl import EddyCorrect
 from nipype.interfaces.utility import IdentityInterface
@@ -21,8 +21,8 @@ from nipype.algorithms.rapidart import ArtifactDetect
 from nipype import Workflow, Node
 from nipype.interfaces.spm import Normalize12
 from nipype.algorithms.misc import Gunzip
+from .tools.utils import *
 
-from miscellaneous.utils import *
 import nipype.interfaces.spm as spm
 import os
 

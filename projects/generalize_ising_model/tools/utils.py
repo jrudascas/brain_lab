@@ -5,49 +5,22 @@ import networkx as nx
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 from scipy.optimize import curve_fit
 import os
-import random
 
 
 def makedir(path):
     if not os.path.exists(path):
         os.mkdir(path)
-        return True
-    return False
 
-def to_generate_randon_graph(size, isolate=False, weighted=True):
-    while True:
-        G = nx.complete_graph(size, create_using=nx.Graph())
-
-        G.remove_edges_from(nx.selfloop_edges(G))
-
-        if not isolate:
-            if len(list(nx.isolates(G))) == 0:
-                break
-
-
-    if weighted:
-        for (u, v) in G.edges():
-            G.edges[u, v]['weight'] = random.random()
-
-    return G
 
 def save_graph(path_output, graph):
     format = '%1.4f'
     matrix = nx.to_numpy_array(graph)
     np.savetxt(path_output, matrix, delimiter=',', fmt=format)
 
-    return matrix
 
-
-def to_save_results(temperature_parameters, J , E, M, H, S, simulated_fc, critical_temperature, path_output, temperature_distribution='linear'):
+def to_save_results(temperature_parameters, J , E, M, H, S, simulated_fc, critical_temperature, path_output):
     default_delimiter = ','
     format = '%1.5f'
-
-    if temperature_distribution == 'linear':
-        ts = np.linspace(temperature_parameters[0], temperature_parameters[1], temperature_parameters[2])
-    elif temperature_distribution == 'log':
-        ts = np.logspace(temperature_parameters[0],np.log10(temperature_parameters[1]),temperature_parameters[2])
-
 
     np.savetxt(path_output + 'ener.csv', E, delimiter=default_delimiter, fmt=format)
     np.savetxt(path_output + 'J_ij.csv', J, delimiter=default_delimiter, fmt=format)
@@ -55,43 +28,34 @@ def to_save_results(temperature_parameters, J , E, M, H, S, simulated_fc, critic
     np.savetxt(path_output + 'susc.csv', S, delimiter=default_delimiter, fmt=format)
     np.savetxt(path_output + 'heat.csv', H, delimiter=default_delimiter, fmt=format)
     np.savetxt(path_output + 'ctem.csv', critical_temperature, delimiter=default_delimiter, fmt=format)
-    np.savetxt(path_output + 'ts.csv', ts, delimiter=default_delimiter, fmt=format)
     np.save(path_output + 'sim_fc', simulated_fc)
 
-
+    ts = np.linspace(temperature_parameters[0], temperature_parameters[1], num=temperature_parameters[2])
     f = plt.figure(figsize=(18, 10))  # plot the calculated values
 
-    ax = f.add_subplot(2, 2, 1)
+    f.add_subplot(2, 2, 1)
     plt.scatter(ts, E, s=50, marker='o', color='IndianRed')
     plt.xlabel("Temperature (T)", fontsize=20)
     plt.ylabel("Energy ", fontsize=20)
-    plt.axvline(x=critical_temperature,linestyle='--',color='k')
-    if temperature_distribution == 'log':
-        ax.set_xscale('log')
+    plt.axis('tight')
 
-    ax = f.add_subplot(2, 2, 2)
+    f.add_subplot(2, 2, 2)
     plt.scatter(ts, abs(M), s=50, marker='o', color='RoyalBlue')
     plt.xlabel("Temperature (T)", fontsize=20)
     plt.ylabel("Magnetization ", fontsize=20)
-    plt.axvline(x=critical_temperature, linestyle='--', color='k')
-    if temperature_distribution == 'log':
-        ax.set_xscale('log')
+    plt.axis('tight')
 
-    ax = f.add_subplot(2, 2, 3)
+    f.add_subplot(2, 2, 3)
     plt.scatter(ts, H, s=50, marker='o', color='IndianRed')
     plt.xlabel("Temperature (T)", fontsize=20)
     plt.ylabel("Specific Heat", fontsize=20)
-    plt.axvline(x=critical_temperature, linestyle='--', color='k')
-    if temperature_distribution == 'log':
-        ax.set_xscale('log')
+    plt.axis('tight')
 
-    ax = f.add_subplot(2, 2, 4)
+    f.add_subplot(2, 2, 4)
     plt.scatter(ts, S, s=50, marker='o', color='RoyalBlue')
     plt.xlabel("Temperature (T)", fontsize=20)
     plt.ylabel("Susceptibility", fontsize=20)
-    plt.axvline(x=critical_temperature, linestyle='--', color='k')
-    if temperature_distribution == 'log':
-        ax.set_xscale('log')
+    plt.axis('tight')
 
     # plt.show()
     plt.savefig(path_output + 'plots.png', dpi=300)
@@ -175,13 +139,13 @@ def peakdet(v, delta, x=None):
 def to_find_critical_temperature(data, temp):
     import numpy as np
     from scipy.signal import argrelextrema
-    local_max = np.where(data==max(data))
-    #local_max = argrelextrema(data, np.greater, order=1)
-   # y_test = data.copy()
-    #y_test[np.array(local_max)] = (y_test[np.array(local_max) + 1] + y_test[np.array(local_max) - 1]) / 2
 
-    #return temp[np.where(y_test == np.max(y_test[local_max]))]
-    return temp[local_max]
+    local_max = argrelextrema(data, np.greater, order=1)
+    y_test = data.copy()
+    y_test[np.array(local_max)] = (y_test[np.array(local_max) + 1] + y_test[np.array(local_max) - 1]) / 2
+
+    return temp[np.where(y_test == np.max(y_test[local_max]))]
+
 
 def to_normalize(J):
     max_J = np.max(J)
@@ -207,7 +171,8 @@ def dim(corr_func, r, idx_Tc):
     p_estimateds = []
 
     r = r[1:-1]
-    corr_func = corr_func[1:-1,1:-1]
+    corr_func = corr_func[1:-1,:]
+    corr_func = corr_func[:, 1:-1]
 
     for i in range(corr_func.shape[0]):
         corr_func_in = corr_func[i,:]
@@ -222,36 +187,6 @@ def dim(corr_func, r, idx_Tc):
     d = (2 * P_0_gtc_mn) + 1
 
     return d
-
-
-def corrfun(corr, J):
-    Corr_all = np.nan_to_num(corr)
-    temp = Corr_all.shape[2]
-    sub = Corr_all.shape[3]
-    max_J = np.max(J)
-    J = J / max_J
-
-    r = np.zeros((sub, 50))
-    corr_func = np.zeros((sub, temp, 50))
-
-    for ii in range(sub):
-        D, B = distance_wei(1. / J[:, :, ii])
-        len_D = np.max(D)
-        div = len_D / 50
-        r[ii, :] = np.linspace(div, len_D, 50)
-        count = 0
-
-        for i in np.linspace(div, len_D, 50):
-
-            a = np.where((D <= i))
-
-            for t in range(temp):
-                corr = Corr_all[:, :, t, ii]
-                corr_avg = np.sum(corr[a]) / len(a[-1])
-                corr_func[ii, t, count] = corr_avg
-
-            count = count + 1
-    return corr_func, r
 
 
 def correlation_function(simulated_matrix, structural_matrix):
@@ -340,3 +275,19 @@ def distance_wei(G):
             V, = np.where(D[u, :] == minD)
 
     return D, B
+
+def mse(a, b):
+    # the 'Mean Squared Error' between the two matrix is the
+    # sum of the squared difference between the two matrix;
+    # NOTE: the two matrix must have the same dimension
+    err = np.sum((a - b) ** 2)
+    err /= float(a.shape[0] * b.shape[1])
+
+    # return the MSE, the lower the error, the more "similar"
+    # the two images are
+    return err
+
+
+def ks_test(A, B):
+    import scipy
+    return 1/scipy.stats.ks_2samp(np.ravel(A), np.ravel(B))[0]

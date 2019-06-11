@@ -1,4 +1,4 @@
-from neuroimaging_pipelines.pipeline import PipelinefMRI
+from projects.neuroimaging_pipelines.pipeline import PipelinefMRI
 
 paths = {'input_path': '/home/brainlab/Desktop/Rudas/Data/Propofol/Awake/Resting',
          'template_spm_path': '/home/brainlab/Desktop/Rudas/Data/Parcellation/TPM.nii',

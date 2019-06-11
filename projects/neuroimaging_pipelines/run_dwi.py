@@ -1,4 +1,4 @@
-from neuroimaging_pipelines.pipeline import PipelineDWI
+from .pipeline import PipelineDWI
 
 paths = {'input_path': '/home/brainlab/Desktop/Rudas/Data/dwitest/HCP/parcellation4',
          'image_parcellation_path': ['/home/brainlab/Desktop/Rudas/Data/dwitest/HCP/parcellation4/atlas_NMI_2mm.nii'],

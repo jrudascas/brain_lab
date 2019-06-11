@@ -1,7 +1,5 @@
-import numpy as np
-from generalize_ising_model.ising_utils import save_graph, to_save_results
+from projects.generalize_ising_model.tools.utils import save_graph, to_save_results
 import os
-from generalize_ising_model.core import generalized_ising
 import networkx as nx
 import random
 import pickle
