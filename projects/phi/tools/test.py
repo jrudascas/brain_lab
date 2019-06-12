@@ -22,6 +22,7 @@ for state in brain_states:
     test_path = '/home/user/Desktop/data_phi/Propofol/' + state + '/'
     test_path_pre = test_path + 'datasink/preprocessing/'
 
+
     sub_num = 1
     for subfolder in os.listdir(test_path_pre):
         sub_path = test_path_pre  + subfolder
