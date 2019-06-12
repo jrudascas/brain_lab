@@ -7,13 +7,13 @@ from projects.generalize_ising_model.tools.utils import to_normalize, to_save_re
 from projects.generalize_ising_model.core import generalized_ising
 from natsort import natsorted
 
-path_input = '/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/'
+path_input = '/home/brainlab/Desktop/experiment2/'
 default_Jij_name = 'J_ij.csv'
 
 # Ising Parameters
 
 no_temperature = 50
-no_simulations = 250                        # Number of simulation after thermalization
+no_simulations = 1200                        # Number of simulation after thermalization
 thermalize_time = 0.3                       #
 
 dir_output_name = path_input + 'simulation'

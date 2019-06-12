@@ -9,7 +9,7 @@ import os
 import matplotlib.patches as mpatches
 from networkx.utils import *
 
-path_simulation_output = '/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/0sizes'
+path_simulation_output = '/home/brainlab/Desktop/new_experiment/simulation/0_sizes'
 
 sizes_ = []
 dimensionality_exp = []
@@ -49,12 +49,12 @@ for simulation in natsorted(os.listdir(path_simulation_output)):
         sizes_.append(J.shape[-1])
         dimensionality_exp.append(dimensionality_sim)
 
-
-fig, ax = plt.subplots(figsize=(10, 7))
-
-parts = plt.violinplot(dimensionality_exp, positions=np.array(sizes_) / 10, showmeans=True, showmedians=False)
-
+fig=plt.figure()
+ax1=fig.add_subplot(111)
+plt.violinplot(dimensionality_exp, positions=np.array(sizes_) / 10, showmeans=True, showmedians=False)
 plt.xlabel("Graph Size")
 plt.ylabel("Dimensionality")
 plt.xticks(np.array(sizes_) / 10, list(map(str, sizes_)))
-plt.show()
+fig.savefig('Size_vs_Dimensionality.png', dpi=1200)
+
+
