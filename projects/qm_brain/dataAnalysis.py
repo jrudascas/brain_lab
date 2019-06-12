@@ -13,7 +13,7 @@ times = load_matrix(filepathTimes)
 
 chanLocs = load_matrix(filepathChanLoc)
 
-x, y, wavefunction_position, phase, normAmp, probability = process_eeg_csv(data,chanLocs)
+x, y, wavefunction_position, phase, normAmp, probability = process_eeg_data(data,chanLocs)
 
 xAvg = probability@x
 yAvg = probability@y
@@ -27,13 +27,10 @@ dy = np.sqrt(ySqrAvg-(yAvg*yAvg))
 #probability_conservation_plot(len(x),probability)
 
 momentum_wavefunction = momentum_wavefunction(wavefunction_position)
-x = x
-momentum_prob = (np.conj(momentum_wavefunction).T)@momentum_wavefunction
 
+momenta_phase,momenta_norm_amp,momentum_prob = momenta_prob(momentum_wavefunction)
 
 #animation_station(xAvg,yAvg,x,y,dx,dy)
-
-#Calculate momentum of brain state
 
 pxSum = np.zeros((len(times),len(x)),dtype=np.complex64)
 pxSqrSum = np.copy(pxSum)
@@ -111,20 +108,10 @@ deltaY = np.sqrt(ySqrAvg-np.square(yAvg))
 deltaPX = np.sqrt(pxSqrAvgL-np.square(pxAvgL))
 deltaPY = np.sqrt(pySqrAvgL-np.square(pyAvgL))
 
-f = plt.figure()
-plt.plot(times,xAvg)
-plt.plot(times,yAvg)
-plt.title('Average Position as Function of Time')
-plt.legend('x','y')
-plt.xlabel('Time (microseconds)')
-plt.ylabel('Position (cm)')
-plt.xlim([0, 1000])
-plt.ylim(([-6,6]))
+plot_avg(xAvg,yAvg,times)
 
 print(min(deltaX*deltaPX), min(deltaY*deltaPY))
 print(pxAvg)
-
-plt.plot(times,deltaX*deltaPX)
 
 plt.show()
 
@@ -139,15 +126,6 @@ momentum_y_sqr = momentum_from_position(ySqrAvg)
 dpx = np.sqrt(momentum_x_sqr-(momentum_x*momentum_x))
 dpy = np.sqrt(momentum_y_sqr-(momentum_y*momentum_y))
 
-plt.figure()
-plt.plot(times,momentum_x)
-plt.plot(times,momentum_y)
-plt.title('Average Momentum as Function of Time')
-plt.legend('px','py')
-plt.xlabel('Time (microseconds)')
-plt.ylabel('Momentum (cm/mu s)')
-plt.xlim([0, 1000])
-plt.ylim(([-6,6]))
-plt.show()
+plot_avg(momentum_x,momentum_y,times,title='Average Momentum as Function of Time',ylabel='Momentum (cm/mu s)')
 
 #animation_station(momentum_x,momentum_y,x,y,dpx,dpy)

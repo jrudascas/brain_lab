@@ -6,7 +6,7 @@ import os
 from scipy.signal import hilbert
 
 def load_matrix(filepath):
-    extension = filepath.split('.')[1]
+    extension = filepath.split('.')[-1]
     if str(extension) == 'csv':
         return np.genfromtxt(filepath,delimiter = ',')
     elif str(extension) == 'npy':
@@ -16,7 +16,7 @@ def load_matrix(filepath):
     elif str(extension) == 'npz':
         return np.load(filepath)
 
-def process_eeg_csv(data,chanLocs):
+def process_eeg_data(data,chanLocs):
     x = chanLocs[:, 0]
     y = chanLocs[:, 1]
 
@@ -37,7 +37,6 @@ def process_eeg_csv(data,chanLocs):
     del ampMag, amplitude, hilbertTransData, chanLocs
 
     return x, y, wavefunction, phase, normAmp, probability
-
 
 def animation_station2(xAvg,yAvg,xInit,yInit):
     fig,ax = plt.subplots(figsize=(10, 6))
@@ -100,5 +99,45 @@ def momentum_from_position(avg_position,ind=1):
 
 def momentum_wavefunction(pos_wavefunc,norm='ortho',axis=1):
     momentum_wavefunction = np.fft.fft(pos_wavefunc,norm=norm,axis=axis)
-    #p_y = np.fft.fft(y_wavefunc, norm=norm, axis=axis)
     return momentum_wavefunction
+
+def momenta_prob(momentum_wavefunction):
+
+    pAmp = np.abs(momentum_wavefunction).T
+
+    pPhase = np.unwrap(np.angle(momentum_wavefunction)).T
+
+    ampMag = np.sqrt(np.sum((pAmp * pAmp).T, axis=0))
+
+    normpAmp = (np.asarray(pAmp.T) / np.asarray(ampMag)).T
+
+    momentum_prob = normpAmp * normpAmp
+
+    del ampMag, pAmp
+
+    return pPhase, normpAmp, momentum_prob
+
+def plot_avg(avg1,avg2,times,ylabel = 'Position (cm)',title = 'Average Position as Function of Time',path_output = None):
+    f = plt.figure()
+    plt.plot(times, avg1)
+    plt.plot(times, avg2)
+    plt.title(title)
+    plt.legend('x', 'y')
+    plt.xlabel('Time (microseconds)')
+    plt.ylabel(ylabel)
+    plt.xlim([0, 1000])
+    plt.ylim(([-6, 6]))
+    if path_output is not None:
+        plt.savefig(path_output, '/' + 'plot.png', dpi=1200)
+        plt.close()
+
+def prob_deriv(probability,ind=1):
+    p = []
+    for i in range(probability.shape[-1]):
+        if i == (probability.shape[-1]-1):
+            p_i = probability[i]
+            p.append(p_i/ind)
+        else:
+            p_i = probability[i + ind] - probability[i]
+            p.append(p_i / ind)
+    return np.asarray(p)
