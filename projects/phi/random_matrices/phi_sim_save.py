@@ -2,11 +2,11 @@ def phi_sim_save(size, output_directory,count,temperature_parameters=(-1,5,50), 
 
 
     import numpy as np
-    from generalize_ising_model.core import generalized_ising
+    from general_ising_model.core import generalized_ising
     import time
-    from generalize_ising_model.ising_utils import to_save_results, makedir, \
+    from general_ising_model.ising_utils import to_save_results, makedir, \
         to_generate_randon_graph, save_graph
-    from generalize_ising_model.phi_project.utils import to_estimate_tpm_from_ising_model, to_calculate_mean_phi, \
+    from phi.utils import to_estimate_tpm_from_ising_model, to_calculate_mean_phi, \
         to_save_phi
 
     makedir(output_directory + '/phi/')

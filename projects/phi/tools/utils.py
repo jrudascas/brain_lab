@@ -70,7 +70,7 @@ def save_freq(frequency,path_output,num):
         format = '%1.5f'
         np.savetxt(path_output + '/' + 'freq_'+ str(num) + '.csv', frequency, delimiter=default_delimiter, fmt=format)
 
-        plt.hist(frequency.T)
+        plt.bar(np.arange(len(frequency)),frequency)
         plt.savefig(path_output + '/' + 'plots_hist_' + str(num)+'.png', dpi=1200)
 
         plt.close()
@@ -112,7 +112,7 @@ def main_tpm_branch(time_series):
 
     return np.copy(tpm), np.copy(state_total), np.copy(frequency)
 
-def plot_ts_avg(ts):
+def plot_ts_avg(ts,path_output = None,num=None):
     import numpy as np
     import matplotlib.pyplot as plt
 
@@ -120,27 +120,31 @@ def plot_ts_avg(ts):
     x = np.arange(ts.shape[0])
 
     f = plt.figure()
-    plt.subplot(1,ts.shape[-1],1)
+    plt.subplot(ts.shape[-1],1,1)
     plt.plot(x,ts[:,0])
     plt.axhline(y[0],color='r')
 
-    plt.subplot(1,ts.shape[-1],2)
+    plt.subplot(ts.shape[-1],1,2)
     plt.plot(x,ts[:,1])
     plt.axhline(y[1],color='r')
 
-    plt.subplot(1,ts.shape[-1],3)
+    plt.subplot(ts.shape[-1],1,3)
     plt.plot(x,ts[:,2])
     plt.axhline(y[2],color='r')
 
-    plt.subplot(1,ts.shape[-1],4)
+    plt.subplot(ts.shape[-1],1,4)
     plt.plot(x,ts[:,3])
     plt.axhline(y[3],color='r')
 
-    plt.subplot(1,ts.shape[-1],5)
+    plt.subplot(ts.shape[-1],1,5)
     plt.plot(x,ts[:,4])
     plt.axhline(y[4],color='r')
 
-    plt.show()
+    if path_output is not None and num is not None:
+        if makedir2(path_output):
+            path_output = path_output + '/data'
+            plt.savefig(path_output + '/' + 'plots_avg_ts_' + str(num)+'.png', dpi=1200)
+            plt.close()
 
 def empirical_tpm_og(time_series):
     import numpy as np
@@ -157,10 +161,10 @@ def empirical_tpm_og(time_series):
     print(tpm)
     return tpm
 
-def empirical_tpm_eps(time_series):
+def empirical_tpm_eps(time_series,path_output,tpm_count):
     import numpy as np
-    from nilearn import plotting
-    tpm, state_total = main_tpm_branch(time_series)
+
+    tpm, state_total,frequency = main_tpm_branch(time_series)
 
     eps = np.min(time_series[np.isfinite(np.log10(time_series))]) * 0.1
     rando = np.random.rand(1, tpm.size - np.count_nonzero(tpm))
@@ -172,9 +176,10 @@ def empirical_tpm_eps(time_series):
         if state_total[div] != 0.0:
             tpm[div, :] /= state_total[div]
 
-    plotting.plot_matrix(tpm, colorbar=True, cmap='plasma')
-    plotting.show()
-    print(tpm)
+
+    save_tpm(tpm, path_output, tpm_count)
+    save_freq(frequency, path_output, tpm_count)
+    plot_ts_avg(time_series, path_output=path_output, num=tpm_count)
 
     return tpm
 
@@ -205,7 +210,7 @@ def empirical_tpm_concat(time_series,path_output):
         tpm_count+=1
         save_tpm(tpm,path_output,tpm_count)
         save_freq(frequency,path_output,tpm_count)
-        #plot_ts_avg(big_ts_array)
+        plot_ts_avg(big_ts_array,path_output=path_output,num=tpm_count)
 
 
     return tpm_list
@@ -222,4 +227,43 @@ def make_ts_array(path,number_regions = 5):
             tup = tup + (timeSeries,)
 
     return np.dstack(tup)
+
+def to_calculate_mean_phi(tpm, spin_mean,eps=None):
+    import numpy as np
+    import pyphi
+    from pyphi.compute import phi
+
+    N = tpm.shape[-1]
+
+    setting_int = np.linspace(0, N - 1, num=N).astype(int)
+
+    M = list(map(lambda x: list(np.binary_repr(x, width=N)), setting_int))
+    M = np.flipud(np.fliplr(np.asarray(M).astype(np.int)))
+
+    num_states = np.log2(N)
+    phi_values = []
+
+    network = pyphi.Network(tpm)
+    for state in range(num_states):
+        if eps == None:
+            if spin_mean[state] != 0:
+                phi_values.append(phi(pyphi.Subsystem(network, M[state, :], range(network.size))))
+        else:
+            if spin_mean[state] < eps:
+                phi_values.append(phi(pyphi.Subsystem(network, M[state, :], range(network.size))))
+
+    weigth = spin_mean[np.where(spin_mean != 0)]
+
+    phiSum = np.sum(phi_values*weigth)
+
+    return np.mean(phi_values), phiSum
+
+def to_save_phi(phi , phiSum, num, path_output):
+    import numpy as np
+
+    default_delimiter = ','
+    format = '%1.5f'
+
+    np.savetxt(path_output + 'phi_' + str(num) + '.csv', phi, delimiter=default_delimiter, fmt=format)
+    np.savetxt(path_output + 'phiSum_' + str(num) + '.csv', phiSum, delimiter=default_delimiter, fmt=format)
 
