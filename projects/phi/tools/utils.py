@@ -286,18 +286,19 @@ def to_calculate_mean_phi(tpm, spin_mean,eps=None):
     import pyphi
     from pyphi.compute import phi
 
-    N = tpm.shape[-1]
+    rows, columns = tpm.shape
 
-    setting_int = np.linspace(0, N - 1, num=N).astype(int)
+    setting_int = np.linspace(0, rows - 1, num=rows).astype(int)
 
-    M = list(map(lambda x: list(np.binary_repr(x, width=N)), setting_int))
-    M = np.flipud(np.fliplr(np.asarray(M).astype(np.int)))
+    M = list(map(lambda x: list(np.binary_repr(x, width=columns)), setting_int))
+    #M = np.flipud(np.fliplr(np.asarray(M).astype(np.int)))
+    M = np.asarray(M).astype(np.int)
 
     #num_states = np.log2(N)
     phi_values = []
 
     network = pyphi.Network(tpm)
-    for state in range(2**N):
+    for state in range(rows):
         if eps == None:
             if spin_mean[state] != 0:
                 phi_values.append(phi(pyphi.Subsystem(network, M[state, :], range(network.size))))
@@ -317,6 +318,11 @@ def to_save_phi(phi , phiSum, num, path_output):
     default_delimiter = ','
     format = '%1.5f'
 
-    np.savetxt(path_output + 'phi_' + str(num) + '.csv', phi, delimiter=default_delimiter, fmt=format)
-    np.savetxt(path_output + 'phiSum_' + str(num) + '.csv', phiSum, delimiter=default_delimiter, fmt=format)
+    filePhi = path_output + 'phi_' + str(num) + '.csv'
+    filePhiSum = path_output + 'phiSum_' + str(num) + '.csv'
+
+    if not file_exists(filePhi):
+        np.savetxt(filePhi, phi, delimiter=default_delimiter, fmt=format)
+    if not file_exists(filePhiSum):
+        np.savetxt(filePhiSum, phiSum, delimiter=default_delimiter, fmt=format)
 

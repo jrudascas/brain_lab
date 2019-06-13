@@ -133,11 +133,11 @@ def plot_avg(avg1,avg2,times,ylabel = 'Position (cm)',title = 'Average Position 
 
 def prob_deriv(probability,ind=1):
     p = []
-    for i in range(probability.shape[-1]):
-        if i == (probability.shape[-1]-1):
-            p_i = probability[i]
+    for i in range(probability.shape[0]):
+        if i == (probability.shape[0]-1):
+            p_i = probability[i,:]
             p.append(p_i/ind)
         else:
-            p_i = probability[i + ind] - probability[i]
+            p_i = probability[i + ind,:] - probability[i,:]
             p.append(p_i / ind)
     return np.asarray(p)
