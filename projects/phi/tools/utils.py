@@ -28,13 +28,23 @@ def makedir2(path):
         return True
     return True
 
+def file_exists(filename):
+    import os
+    exists = os.path.isfile(filename)
+    if exists:
+        return True
+    else:
+        return False
+
 def save_ts(ts, path_output, filepath, sub_num):
     import numpy as np
     if makedir2(path_output):
         default_delimiter = ','
         format = '%1.5f'
         name = filepath.split('.')[-3]
-        np.savetxt(path_output + '/' + 'ts_' + name + '_Sub' + str(sub_num) + '.csv', ts, delimiter=default_delimiter, fmt=format)
+        filename = path_output + '/' + 'ts_' + name + '_Sub' + str(sub_num) + '.csv'
+        if not file_exists(filename):
+            np.savetxt(filename, ts, delimiter=default_delimiter, fmt=format)
 
 def save_tpm(tpm,path_output,num):
     import numpy as np
@@ -44,20 +54,18 @@ def save_tpm(tpm,path_output,num):
     if makedir2(path_output):
         default_delimiter = ','
         format = '%1.5f'
-        np.savetxt(path_output + '/' + 'tpm_'+ str(num) + '.csv', tpm, delimiter=default_delimiter, fmt=format)
+        filename1 = path_output + '/' + 'tpm_'+ str(num) + '.csv'
 
-        '''
-        plt.imshow(tpm,cmap='plasma')
-        plt.colorbar(boundaries=np.linspace(0, 1, 6))
-        plt.savefig(path_output + '/' + 'plots_' + str(num)+'.png', dpi=1200)
+        if not file_exists(filename1):
+            np.savetxt(filename1, tpm, delimiter=default_delimiter, fmt=format)
 
-        plt.close()
-        '''
         fig, ax = plt.subplots()
 
         plotting.plot_matrix(tpm, figure=fig, vmax=1, vmin=0)
 
-        fig.savefig(path_output + '/' + 'plots_' + str(num)+'.png', dpi=1200)
+        filename2 = path_output + '/' + 'plots_' + str(num)+'.png'
+        if not file_exists(filename2):
+            fig.savefig(filename2, dpi=1200)
 
         plt.close(fig)
 
@@ -68,13 +76,55 @@ def save_freq(frequency,path_output,num):
     if makedir2(path_output):
         default_delimiter = ','
         format = '%1.5f'
-        np.savetxt(path_output + '/' + 'freq_'+ str(num) + '.csv', frequency, delimiter=default_delimiter, fmt=format)
+
+        filename1 =path_output + '/' + 'freq_'+ str(num) + '.csv'
+
+        if not file_exists(filename1):
+            np.savetxt(filename1, frequency, delimiter=default_delimiter, fmt=format)
 
         plt.bar(np.arange(len(frequency)),frequency)
-        plt.savefig(path_output + '/' + 'plots_hist_' + str(num)+'.png', dpi=1200)
+
+        filename2 = path_output + '/' + 'plots_hist_' + str(num)+'.png'
+        if not file_exists(filename2):
+            plt.savefig(filename2, dpi=1200)
 
         plt.close()
 
+def tpm_SbyN(time_series):
+    import numpy as np
+    avgs = np.mean(time_series, axis=0)
+
+    time_series_other = np.copy(time_series)
+    for i in range(len(avgs)):
+        time_series[np.where(time_series_other[:, i] >= avgs[i]),i] = 0
+        time_series[np.where(time_series_other[:, i] < avgs[i]),i] = 1
+
+    time_series = time_series.astype(np.int)
+
+    markov_chain = time_series.tolist()
+    n = len(markov_chain[0])
+    tpm = np.zeros((2 ** n, n))
+
+    for (s1, s2) in zip(markov_chain, markov_chain[1:]):
+        i = int(''.join(map(str, s1)), 2)
+        for k in range(len(s1)):
+            if s1[k] != s2[k]:
+                tpm[i][k] += 1
+
+    state_total = np.sum(tpm, axis=-1)
+
+
+    frequency = np.zeros((2 ** time_series.shape[-1]))
+
+    for s in markov_chain:
+        i = int(''.join(map(str, s)), 2)
+        frequency[i] += 1
+
+    frequency /= len(markov_chain)
+
+
+
+    return np.copy(tpm), np.copy(state_total), np.copy(frequency)
 
 def main_tpm_branch(time_series):
     import numpy as np
@@ -89,7 +139,7 @@ def main_tpm_branch(time_series):
 
     markov_chain = time_series.tolist()
     n = len(markov_chain[0])
-    tpm = np.zeros((2 ** n, 2 ** n))
+    tpm = np.zeros((2 ** n, 2**n))
 
     for (s1, s2) in zip(markov_chain, markov_chain[1:]):
         i = int(''.join(map(str, s1)), 2)
@@ -106,9 +156,6 @@ def main_tpm_branch(time_series):
         frequency[i] += 1
 
     frequency /= len(markov_chain)
-
-
-
 
     return np.copy(tpm), np.copy(state_total), np.copy(frequency)
 
@@ -143,22 +190,27 @@ def plot_ts_avg(ts,path_output = None,num=None):
     if path_output is not None and num is not None:
         if makedir2(path_output):
             path_output = path_output + '/data'
-            plt.savefig(path_output + '/' + 'plots_avg_ts_' + str(num)+'.png', dpi=1200)
+
+            filename = path_output + '/' + 'plots_avg_ts_' + str(num)+'.png'
+            if not file_exists(filename):
+                plt.savefig(filename, dpi=1200)
+
             plt.close()
 
-def empirical_tpm_og(time_series):
+def empirical_tpm_og(time_series,path_output,tpm_count):
     import numpy as np
     from nilearn import plotting
-    tpm, state_total = main_tpm_branch(time_series)
+    tpm, state_total,frequency = main_tpm_branch(time_series)
 
     # Normalizing respect to rows
     for div in range(len(state_total)):
         if state_total[div] != 0.0:
             tpm[div, :] /= state_total[div]
 
-    plotting.plot_matrix(tpm, colorbar=True, cmap='plasma')
-    plotting.show()
-    print(tpm)
+    save_tpm(tpm, path_output, tpm_count)
+    save_freq(frequency, path_output, tpm_count)
+    plot_ts_avg(time_series, path_output=path_output, num=tpm_count)
+
     return tpm
 
 def empirical_tpm_eps(time_series,path_output,tpm_count):
@@ -200,7 +252,7 @@ def empirical_tpm_concat(time_series,path_output):
 
         big_ts_array = np.squeeze(np.vstack(np.array((np.dsplit(new_ts,new_ts.shape[-1])))))
 
-        tpm, state_total, frequency = main_tpm_branch(np.copy(big_ts_array))
+        tpm, state_total, frequency = tpm_SbyN(np.copy(big_ts_array))
 
         # Normalizing respect to rows
         for div in range(len(state_total)):
@@ -241,11 +293,11 @@ def to_calculate_mean_phi(tpm, spin_mean,eps=None):
     M = list(map(lambda x: list(np.binary_repr(x, width=N)), setting_int))
     M = np.flipud(np.fliplr(np.asarray(M).astype(np.int)))
 
-    num_states = np.log2(N)
+    #num_states = np.log2(N)
     phi_values = []
 
     network = pyphi.Network(tpm)
-    for state in range(num_states):
+    for state in range(2**N):
         if eps == None:
             if spin_mean[state] != 0:
                 phi_values.append(phi(pyphi.Subsystem(network, M[state, :], range(network.size))))
