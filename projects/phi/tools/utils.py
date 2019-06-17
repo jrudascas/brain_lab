@@ -322,7 +322,22 @@ def to_save_phi(phi , phiSum, num, path_output):
     filePhiSum = path_output + 'phiSum_' + str(num) + '.csv'
 
     if not file_exists(filePhi):
-        np.savetxt(filePhi, phi, delimiter=default_delimiter, fmt=format)
+        np.savetxt(filePhi, np.asarray([phi]), delimiter=default_delimiter, fmt=format)
     if not file_exists(filePhiSum):
-        np.savetxt(filePhiSum, phiSum, delimiter=default_delimiter, fmt=format)
+        np.savetxt(filePhiSum, np.asarray([phiSum]), delimiter=default_delimiter, fmt=format)
 
+def save_list(list,path_output,state,network,type='tpm'):
+    import numpy as np
+
+    path_output = path_output + str(network) + '/'
+
+    if makedir2(path_output):
+        default_delimiter = ','
+        format = '%1.5f'
+        filename1 = path_output + '/' + state + type
+
+        if not file_exists(filename1):
+            if type == 'freq':
+                np.savetxt(filename1 + '.csv', np.asarray(list), delimiter=default_delimiter, fmt=format)
+            elif type == 'tpm':
+                np.save(filename1,np.asarray(list))

@@ -10,7 +10,9 @@ data = load_matrix(filepathData)
 times = load_matrix(filepathTimes)
 chanLocs = load_matrix(filepathChanLoc)
 
-x, y, wavefunction_position, phase, normAmp, probability = process_eeg_data(data,chanLocs)
+x, y ,phase, normAmp, probability = process_eeg_data(data,chanLocs)
+
+psi = normAmp*np.exp(1j*phase)
 
 xAvg = probability@x
 yAvg = probability@y
@@ -23,7 +25,7 @@ dy = np.sqrt(ySqrAvg-(yAvg*yAvg))
 
 #probability_conservation_plot(len(x),probability)
 
-momentum_wavefunction = momentum_wavefunction(wavefunction_position)
+momentum_wavefunction = momentum_wavefunction(psi)
 
 momenta_phase,momenta_norm_amp,momentum_prob = momenta_prob(momentum_wavefunction)
 
@@ -82,3 +84,13 @@ plt.title('Brain Uncertainty')
 plt.xlabel('Time (microseconds)')
 plt.ylabel('Uncertainty')
 plt.savefig('UncertaintyY.png',dpi=600)
+
+
+path = '/home/user/Desktop/QMBrain/'
+
+save_uncertainty(dx,path,'DeltaX')
+save_uncertainty(dy,path,'DeltaY')
+save_uncertainty(dpx,path,'DeltaPX')
+save_uncertainty(dpy,path,'DeltaPY')
+save_uncertainty(uncertainty_x,path,'DeltaXDeltaPX')
+save_uncertainty(uncertainty_y,path,'DeltaYDeltaPY')
