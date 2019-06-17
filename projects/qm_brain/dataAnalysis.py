@@ -1,4 +1,4 @@
-from .utils import *
+from utils import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -13,7 +13,7 @@ times = load_matrix(filepathTimes)
 
 chanLocs = load_matrix(filepathChanLoc)
 
-x, y, wavefunction_position, phase, normAmp, probability = process_eeg_data(data,chanLocs)
+x, y, phase, normAmp, probability = process_eeg_data(data,chanLocs)
 
 xAvg = probability@x
 yAvg = probability@y

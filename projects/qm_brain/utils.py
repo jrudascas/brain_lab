@@ -16,6 +16,14 @@ def load_matrix(filepath):
     elif str(extension) == 'npz':
         return np.load(filepath)
 
+def file_exists(filename):
+    import os
+    exists = os.path.isfile(filename)
+    if exists:
+        return True
+    else:
+        return False
+
 def process_eeg_data(data,chanLocs):
     x = chanLocs[:, 0]
     y = chanLocs[:, 1]
@@ -24,7 +32,6 @@ def process_eeg_data(data,chanLocs):
 
     amplitude = np.abs(hilbertTransData).T
 
-    wavefunction = hilbertTransData
 
     phase = np.unwrap(np.angle(hilbertTransData)).T
 
@@ -36,7 +43,7 @@ def process_eeg_data(data,chanLocs):
 
     del ampMag, amplitude, hilbertTransData, chanLocs
 
-    return x, y, wavefunction, phase, normAmp, probability
+    return x, y, phase, normAmp, probability
 
 def animation_station2(xAvg,yAvg,xInit,yInit):
     fig,ax = plt.subplots(figsize=(10, 6))
@@ -115,7 +122,7 @@ def momenta_prob(momentum_wavefunction):
 
     del ampMag, pAmp
 
-    return pPhase, normpAmp, momentum_prob
+    return pPhase, normpAmp, momentum_prob.T
 
 def plot_avg(avg1,avg2,times,ylabel = 'Position (cm)',title = 'Average Position as Function of Time',path_output = None):
     f = plt.figure()
@@ -133,11 +140,21 @@ def plot_avg(avg1,avg2,times,ylabel = 'Position (cm)',title = 'Average Position 
 
 def prob_deriv(probability,ind=1):
     p = []
-    for i in range(probability.shape[-1]):
-        if i == (probability.shape[-1]-1):
-            p_i = probability[i]
+    for i in range(probability.shape[0]):
+        if i == (probability.shape[0]-1):
+            p_i = probability[i,:]
             p.append(p_i/ind)
         else:
-            p_i = probability[i + ind] - probability[i]
+            p_i = probability[i + ind,:] - probability[i,:]
             p.append(p_i / ind)
     return np.asarray(p)
+
+def save_uncertainty(delta,path,name):
+
+    default_delimiter = ','
+    format = '%1.5f'
+
+    file = path + str(name) + '.csv'
+
+    if not file_exists(file):
+        np.savetxt(file, np.asarray(delta), delimiter=default_delimiter, fmt=format)
