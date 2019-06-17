@@ -62,6 +62,7 @@ def to_save_results(temperature_parameters, J, E, M, H, S, simulated_fc, critica
 
     del ts
     plt.close()
+    plt.close(f)
 
 
 def peakdet(v, delta, x=None):
@@ -171,9 +172,9 @@ def dim(corr_func, r, idx_Tc):
 
     n_temperatures, n_samples = corr_func.shape
 
-    r = r[1:n_samples]
-    corr_func = corr_func[1:n_temperatures, :]
-    corr_func = corr_func[:, 1:n_samples]
+    #r = r[1:n_samples]
+    #corr_func = corr_func[1:n_temperatures, :]
+    #corr_func = corr_func[:, 1:n_samples]
 
     for i in range(corr_func.shape[0]):
         corr_func_in = corr_func[i, :]
