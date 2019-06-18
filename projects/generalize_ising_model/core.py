@@ -11,14 +11,18 @@ n_cpu = multiprocessing.cpu_count() - 2
 
 
 # @numba.jit(nopython=True)
-def initial_spin(N):
+def initial_spin(N, type='digital'):
     # Set a random spin configuration as a initial condition
-    initial = 2 * np.random.randint(2, size=(N, 1), dtype=np.int8) - 1
+    if type == 'digital':
+        initial = 2 * np.random.randint(2, size=(N, 1), dtype=np.int8) - 1
+    elif type == 'analogy':
+        initial = 2 * np.random.rand(N) - 1
+        #initial = 2 * np.random.randint(2, size=(N, 1)) - 1
     return np.squeeze(initial)
 
 
 # Montecarlo Simulation - Metroplolis Algorithm
-def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi_variables=False):
+def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi_variables=False, type='digital'):
     no_spin = len(spin_vec)
     static, moving = np.triu_indices(no_spin, k=1)
     static = static.astype(np.int16)
@@ -26,22 +30,39 @@ def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi
 
     list_spin = []
 
+
     for i in range(int(iterations / no_spin)):
         spin_permutation = permutation(no_spin)
+        delta = 0.01
         for j in range(no_spin):
 
+            #aux = np.copy()
             d_e = 2 * np.dot(np.delete(spin_vec, spin_permutation[j]), np.delete(J[spin_permutation[j], :], spin_permutation[j]))
-            d_e *= spin_vec[spin_permutation[j]]
+
+            new_spin = np.copy(spin_vec[spin_permutation[j]])
+
+            if type == 'analogy':
+                if new_spin > 0:
+                    new_spin = new_spin - delta
+                else:
+                    new_spin = new_spin + delta
+                #if random() > 0.5:
+                #    new_spin = new_spin + delta
+                #else:
+                #    new_spin = new_spin - delta
+
+            #d_e *= spin_vec[spin_permutation[j]]
+            d_e *= new_spin
 
             if d_e <= 0 or random() <= np.exp(-d_e / t):
-                spin_vec[spin_permutation[j]] *= -1
+                spin_vec[spin_permutation[j]] = -1*new_spin
 
             list_spin.append(np.copy(spin_vec))
 
     if thermalize_time is not None:
 
         index_thermalize_time = np.round(iterations * thermalize_time).astype(int)
-        spin_thermalized = np.squeeze(np.array(list_spin))[index_thermalize_time:, :].astype(np.int8)
+        spin_thermalized = np.squeeze(np.array(list_spin))[index_thermalize_time:, :]
         energy = 0
         energy_squard = 0
 
@@ -85,6 +106,7 @@ def compute_par(values):
 
     E, M, S, H, spin_mean = [], [], [], [], []
     phi_variables = values[6]
+    type = values[7]
     simulated_fc = np.zeros((n, n, values[2] - values[1]))
 
     cont = 0
@@ -93,12 +115,12 @@ def compute_par(values):
     for tT in range(values[1], values[2]):
         #print('|', end='')
 
-        spin_vec = initial_spin(n)
+        spin_vec = initial_spin(n, type=type)
         if phi_variables:
-            es, ess, ms, mss, spin_bin_sum = monte_carlo_metropolis(values[0], spin_vec, ts[tT], no_flip, values[4], phi_variables=phi_variables)
+            es, ess, ms, mss, spin_bin_sum = monte_carlo_metropolis(values[0], spin_vec, ts[tT], no_flip, values[4], phi_variables=phi_variables, type=type)
             spin_mean.append(spin_bin_sum / avg_therm)
         else:
-            es, ess, ms, mss = monte_carlo_metropolis(values[0], spin_vec, ts[tT], no_flip, values[4], phi_variables=phi_variables)
+            es, ess, ms, mss = monte_carlo_metropolis(values[0], spin_vec, ts[tT], no_flip, values[4], phi_variables=phi_variables, type=type)
         E.append((es / avg_therm) / n)
         M.append((ms / avg_therm) / n)
         S.append((((mss / avg_therm) - (ms / avg_therm) ** 2) / n / ts[tT]) / n)
@@ -107,7 +129,7 @@ def compute_par(values):
         simulation = np.zeros((n, values[3]))
 
         for sim in range(values[3]):
-            simulation[:, sim] = monte_carlo_metropolis(values[0], spin_vec, ts[tT], n, phi_variables=phi_variables)
+            simulation[:, sim] = monte_carlo_metropolis(values[0], spin_vec, ts[tT], n, phi_variables=phi_variables, type=type)
 
         simulated_fc[..., cont] = np.corrcoef(simulation)
         cont += 1
@@ -118,7 +140,7 @@ def compute_par(values):
         return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]))
 
 
-def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=100, thermalize_time=0.3, temperature_distribution ='lineal', phi_variables = False):
+def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=100, thermalize_time=0.3, temperature_distribution ='lineal', phi_variables = False, type='digital'):
     n = Jij.shape[-1]
 
     if temperature_distribution == 'lineal':
@@ -134,9 +156,9 @@ def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=1
 
     for next in range(n_cpu):
         if (next + 1) * step_len > temperature_parameters[2]:
-            l.append((Jij, previus, temperature_parameters[2], n_time_points, thermalize_time, ts, phi_variables))
+            l.append((Jij, previus, temperature_parameters[2], n_time_points, thermalize_time, ts, phi_variables, type))
         else:
-            l.append((Jij, previus, int((next + 1) * step_len), n_time_points, thermalize_time, ts, phi_variables))
+            l.append((Jij, previus, int((next + 1) * step_len), n_time_points, thermalize_time, ts, phi_variables, type))
 
         previus = int((next + 1) * step_len)
 
@@ -168,4 +190,6 @@ def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=1
             simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
 
         critical_temperature = to_find_critical_temperature(S, ts)
+
+        
         return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H)
