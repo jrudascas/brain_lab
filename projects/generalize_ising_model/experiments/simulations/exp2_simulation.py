@@ -44,7 +44,8 @@ for dirs in natsorted(os.listdir(path_input_aux)):
                 #temperature_parameters = (0.05, 5, no_temperature)  # Temperature parameters (initial tempeture, final tempeture, number of steps)
 
                 if not os.path.exists(dir_output_name_case_exp + '/' + 'parameters.pkl'):
-                    temperature_parameters = (0.005, J.shape[-1] * (np.mean(J) + 0.2), no_temperature)  # Temperature parameters (initial tempeture, final tempeture, number of steps)
+                    #temperature_parameters = (0.005, J.shape[-1] * (np.mean(J) + 0.2), no_temperature)  # Temperature parameters (initial tempeture, final tempeture, number of steps)
+                    temperature_parameters = (0.005, 8, no_temperature)  # Temperature parameters (initial tempeture, final tempeture, number of steps)
                     output = open(dir_output_name_case_exp + '/' + 'parameters.pkl', 'wb')
                     pickle.dump({'temperature_parameters': temperature_parameters, 'no_simulations': no_simulations,
                                  'thermalize_time': thermalize_time}, output)

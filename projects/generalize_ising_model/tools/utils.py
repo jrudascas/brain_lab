@@ -173,7 +173,7 @@ def dim(corr_func, r, idx_Tc):
     n_temperatures, n_samples = corr_func.shape
 
     #r = r[1:n_samples]
-    #corr_func = corr_func[1:n_temperatures, :]
+    corr_func = corr_func[1:n_temperatures, :]
     #corr_func = corr_func[:, 1:n_samples]
 
     for i in range(corr_func.shape[0]):
