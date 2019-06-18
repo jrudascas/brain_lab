@@ -1,4 +1,4 @@
-from generalize_ising_model.ising_utils import to_normalize, to_save_results, correlation_function, dim, find_nearest
+from projects.generalize_ising_model.tools.utils import to_normalize, to_save_results, correlation_function, dim, find_nearest
 from os import walk
 import networkx as nx
 import numpy as np
@@ -9,23 +9,28 @@ import os
 import matplotlib.patches as mpatches
 
 
-path_simulation_output = ['/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/0_others/moreno_seventh_seventh',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/11_social/karate_club',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/10_geometric/geometric',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/10_geometric/intersection',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/10_geometric/small_world',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/10_geometric/waxman',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/14_undirected_weighted_1.0/N_75',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/14_undirected_weighted_1.0/N_25']
+path_simulation_output = ['/home/brainlab/Desktop/experiment2/simulation/0others/karate_club',
+                          '/home/brainlab/Desktop/experiment2/simulation/13_geometric/geometric',
+                          '/home/brainlab/Desktop/experiment2/simulation/13_geometric/intersection',
+                          '/home/brainlab/Desktop/experiment2/simulation/13_geometric/small_world',
+                          '/home/brainlab/Desktop/experiment2/simulation/13_geometric/waxman',
+                          '/home/brainlab/Desktop/experiment2/simulation/0others/N_75',
+                          '/home/brainlab/Desktop/experiment2/simulation/0others/N_25']
 '''
 
-path_simulation_output = ['/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/hcp',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/00celegant_new',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/cat-mixed-species_brain',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/macaque-rhesus_brain',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/2enzimes_g16',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/1proteine_DD_g1065',
-                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/mouse_brain']
+path_simulation_output = ['/home/brainlab/Desktop/experiment2/simulation/15_biological/5hcp_det',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/5hcp_prob',
+                          #'/home/brainlab/Desktop/experiment2/simulation/15_biological/00celegant_new',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/4cat-mixed-species_brain',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/3macaque-rhesus_brain',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/2enzimes_g16',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/1proteine_DD_g1065',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/6mouse_brain',
+                          #'/home/brainlab/Desktop/experiment2/simulation/15_biological/7mouse_visual_cortex',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/8parcellation_48',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/9parcellation_84',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/99parcellation_112'
+                          ]
                           ##'/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/1mouse_visual_cortex',
                           ##'/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/11_social/caveman_graph',
 
@@ -35,7 +40,7 @@ path_simulation_output = ['/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/
 l = len(path_simulation_output)
 
 
-labels_ = ['moreno_seventh_seventh',
+labels_ = [#'moreno_seventh_seventh',
            'karate_club',
            'geometric',
            'intersection',
@@ -44,16 +49,22 @@ labels_ = ['moreno_seventh_seventh',
            'weighted_size_75_density_100',
            'weighted_size_25_density_100']
 '''
-labels_ = ['hcp',
-           'c-elegant',
+labels_ = ['mean_hcp_det',
+           'mean_hcp_prob',
+           #'c-elegant',
            'cat-mixed-species_brain',
            'macaque-rhesus_brain',
            'enzimes_g16',
            'proteine_DD_g1065',
-           'mouse_brain']
-           ##'mouse_visual_cortex',
-           ##'caveman_graph',
+           'mouse_brain',
+           #'mouse_visual_cortex',
+           'single_subject_hcp_48',
+           'single_subject_hcp_84',
+           'single_subject_hcp_112']
+           #'single_subject_hcp_333'
+           #'caveman_graph',
 '''
+
 dimensionality_ = []
 
 results = []
@@ -185,15 +196,15 @@ color = ['red',
          'cyan',
          'magenta',
          'yellow',
-         'fuchsia',
          'teal',
-         'pink',
          'brown',
          'gray',
+         'fuchsia',
          'navy',
          'knaki',
          'tomato',
-         'olive'
+         'olive',
+         'pink'
          ]
 cont = 0
 

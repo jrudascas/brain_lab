@@ -55,6 +55,6 @@ plt.violinplot(dimensionality_exp, positions=np.array(sizes_) / 10, showmeans=Tr
 plt.xlabel("Graph Size")
 plt.ylabel("Dimensionality")
 plt.xticks(np.array(sizes_) / 10, list(map(str, sizes_)))
-fig.savefig('Size_vs_Dimensionality.png', dpi=1200)
+fig.savefig('Size_vs_Dimensionality.png', dpi=300)
 
 
