@@ -54,10 +54,10 @@ class PipelineDWI(Pipeline):
         infosource.iterables = [('subject_id', subject_list)]
 
         # SelectFiles - to grab the data (alternativ to DataGrabber)
-        anat_file = opj('{subject_id}/anat/', 't1.nii')
-        dwi_file = opj('{subject_id}/dwi/', 'dwi.nii')
-        bvec_file = opj('{subject_id}/dwi/', 'bvec.bvec')
-        bval_file = opj('{subject_id}/dwi/', 'bval.bval')
+        anat_file = opj('{subject_id}/data/T1w/', 'T1w_acpc_dc_restore_1.25.nii.gz')
+        dwi_file = opj('{subject_id}/data/T1w/Diffusion/', 'data.nii.gz')
+        bvec_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvecs')
+        bval_file = opj('{subject_id}/dwi/Diffusion/', 'bvals')
 
         templates = {'anat': anat_file,
                      'dwi': dwi_file,

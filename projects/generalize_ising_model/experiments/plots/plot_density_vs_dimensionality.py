@@ -1,4 +1,4 @@
-from generalize_ising_model.ising_utils import to_normalize, to_save_results, correlation_function, dim, find_nearest
+from projects.generalize_ising_model.tools.utils import to_normalize, to_save_results, correlation_function, dim, find_nearest
 from os import walk
 import numpy as np
 import pickle
@@ -8,9 +8,8 @@ import os
 import matplotlib.patches as mpatches
 from networkx.utils import *
 
-path_simulation_output = ['/home/user/Desktop/experiment_1/simulation/density_25_size_20',
-                          '/home/user/Desktop/experiment_1/simulation/density_50_size_20',
-                          '/home/user/Desktop/experiment_1/simulation/density_100_size_20']
+path_simulation_output = ['/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/1_density_25_size_20',
+                          '/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/2_density_25_size_40']
 
 sizes_ = np.linspace(5, 100, num=20).astype(np.int16)
 
@@ -98,7 +97,7 @@ for exp in dimensionality_:
         pc.set_facecolor(colors[cont])
     cont += 1
 
-blue_patch = mpatches.Patch(color='blue', label='Density Level = 25%')
+blue_patch = mpatches.Patch(color='blue', label='Graph Size Level = 25%')
 green_patch = mpatches.Patch(color='green', label='Density Level = 50%')
 red_patch = mpatches.Patch(color='red', label='Density Level = 100%')
 # black_patch = mpatches.Patch(color='black', label='Weighted 80%')
