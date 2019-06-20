@@ -1,4 +1,4 @@
-from .pipeline import PipelineDWI
+from projects.neuroimaging_pipelines.pipeline import PipelineDWI
 
 paths = {'input_path': '/home/brainlab/Desktop/Rudas/Data/hcp_100',
          'image_parcellation_path': [

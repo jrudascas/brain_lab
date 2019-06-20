@@ -57,7 +57,7 @@ class PipelineDWI(Pipeline):
         anat_file = opj('{subject_id}/data/T1w/', 'T1w_acpc_dc_restore_1.25.nii.gz')
         dwi_file = opj('{subject_id}/data/T1w/Diffusion/', 'data.nii.gz')
         bvec_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvecs')
-        bval_file = opj('{subject_id}/dwi/Diffusion/', 'bvals')
+        bval_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvals')
 
         templates = {'anat': anat_file,
                      'dwi': dwi_file,

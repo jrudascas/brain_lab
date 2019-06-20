@@ -8,18 +8,33 @@ import os
 import matplotlib.patches as mpatches
 from networkx.utils import *
 
-default_size = 20
-susceptibility_exp = []
+path_simulation_output = ['/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/1_density_25_size_20',
+                          '/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/0_density_50_size_20',
+                          '/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/0_density_100_size_20']
+
+sizes_ = np.linspace(5, 100, num=20).astype(np.int16)
+
 dimensionality_ = []
-degre_ = []
-max_degre_ = []
-
-path_simulation_output = ['/home/brainlab/Desktop/Rudas/Data/Ising/new_experiment/simulation/000_density_20']
-                          #'/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/13_undirected_unweighted_0.8']
-#                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/3_undirected_unweighted',
-#                          '/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/4_undirected_weighted']
-
-sizes_ = np.linspace(0.05, 100, num=19).astype(np.int16)
+labels = ['0 - 0.05',
+          '0.05 - 0.1',
+          '0.1 - 0.15',
+          '0.15 - 0.2',
+          '0.2 - 0.25',
+          '0.25 - 0.3',
+          '0.3 - 0.35',
+          '0.35 - 0.4',
+          '0.4 - 0.45',
+          '0.45 - 5',
+          '0.5 - 0.55',
+          '0.55 - 0.6',
+          '0.6 - 0.65',
+          '0.65 - 0.7',
+          '0.7 - 0.75',
+          '0.75 - 0.8',
+          '0.8 - 0.85',
+          '0.85 - 0.9',
+          '0.9 - 0.95',
+          '0.95 - 1']
 
 for path in path_simulation_output:
     print(path)
@@ -47,7 +62,6 @@ for path in path_simulation_output:
                 path_entity = path_simulation + '/' + entity + '/'
 
                 if os.path.isdir(path_entity):
-                    #print(entity)
 
                     simulated_matrix = np.load(path_entity + 'sim_fc.npy')
                     J = np.loadtxt(path_entity + 'J_ij.csv', delimiter=',')
@@ -58,14 +72,12 @@ for path in path_simulation_output:
                     c, r = correlation_function(simulated_matrix, J)
 
                     index_ct = find_nearest(ts, critical_temperature)
-                    dimensionality = dim(c, r, index_ct)
-                    if not np.isinf(r[-1]):
-                        print(entity)
-                        print(dimensionality)
+
+                    if not np.isinf(r[-1]) and not np.isnan(r[-1]):
+                        dimensionality = dim(c, r, index_ct)
                         dimensionality_sim.append(dimensionality)
-#            if dimensionality_sim:
-#                dimensionality_sim.remove(
-#                    np.max(dimensionality_sim))  # Removing maximal dimensionality (Probably is other outlier)
+                    else:
+                        print('Bad')
             dimensionality_exp.append(dimensionality_sim)
     dimensionality_.append(dimensionality_exp)
 
@@ -86,14 +98,15 @@ for exp in dimensionality_:
         pc.set_facecolor(colors[cont])
     cont += 1
 
-blue_patch = mpatches.Patch(color='blue', label='Graph Size = 20')
-#green_patch = mpatches.Patch(color='green', label='Graph Size = 40')
-#red_patch = mpatches.Patch(color='red', label='Graph Size = 60')
+blue_patch = mpatches.Patch(color='blue', label='Graph Size Level = 25%')
+green_patch = mpatches.Patch(color='green', label='Density Level = 50%')
+red_patch = mpatches.Patch(color='red', label='Density Level = 100%')
 # black_patch = mpatches.Patch(color='black', label='Weighted 80%')
 
-plt.legend(handles=[blue_patch])
-plt.xlabel("Graph density")
+plt.legend(handles=[blue_patch, green_patch, red_patch])
+plt.xlabel("Value range")
 plt.ylabel("Dimensionality")
 
-plt.xticks(np.array(new_size)/10, list(map(str, new_size)))
+plt.xticks(np.array(new_size)/10, labels, rotation='vertical')
+plt.savefig('range_size_20.png')
 plt.show()
