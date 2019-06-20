@@ -4,7 +4,7 @@ from projects.phi.tools.utils import *
 
 brain_states = ['Awake','Deep','Mild','Recovery']
 
-networks = ['Aud','Cingulo','DMN','Dorsal','Fronto','Retro','SMhand','SMmouth','Ventral','Vis']
+networks = ['Aud','DMN','Dorsal','Ventral','Cingulo','Fronto','Retro','SMhand','SMmouth','Vis']
 main_path = '/home/user/Desktop/data_phi/phi/'
 
 for state in brain_states:
@@ -12,7 +12,7 @@ for state in brain_states:
     test_path_save = main_path + state + '/'
 
 
-
+    '''
     new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Auditory_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/CinguloOperc_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/',
@@ -23,6 +23,8 @@ for state in brain_states:
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/SMmouth_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/VentralAttn_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/Visual_parcellation_5/data/']
+    '''
+    new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/']
 
 
     tpmList, freqList = [], []
@@ -65,11 +67,19 @@ for network in networks:
 
         phiList, phiSumList = [], []
 
-        for j in range(len(tpm_list)):
-            phi, phi_sum = to_calculate_mean_phi(tpm_list[j], spin_mean_list[j])
+        if not file_exists(save_path_phi + 'phi_' + str(i) + '.csv'):
 
-            phiList.append(phi)
-            phiSumList.append(phi_sum)
+            for j in range(len(tpm_list)):
+
+                phi, phi_sum = to_calculate_mean_phi(tpm_list[j], spin_mean_list[j])
+
+                phiList.append(phi)
+                phiSumList.append(phi_sum)
+
+        else:
+            print('The file: ', save_path_phi + 'phi_' + str(i) + '.csv', 'already exists!')
 
         to_save_phi(phiList, phiSumList, i, save_path_phi)
         phiList, phiSumList = [], []
+
+    tpm_list, spin_mean_list = [],[]

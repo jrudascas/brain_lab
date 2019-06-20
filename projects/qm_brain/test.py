@@ -1,10 +1,10 @@
-from utils import *
+from projects.qm_brain.utils import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-filepathChanLoc = '/home/user/Desktop/QMBrain/chanLocXY.csv'
-filepathData = '/home/user/Desktop/QMBrain/data.csv'
-filepathTimes = '/home/user/Desktop/QMBrain/times.csv'
+filepathChanLoc = '/home/user/Desktop/QMBrain/EEG Data/1/chanLocXY.csv'
+filepathData = '/home/user/Desktop/QMBrain/EEG Data/1/data.csv'
+filepathTimes = '/home/user/Desktop/QMBrain/EEG Data/1/times.csv'
 
 data = load_matrix(filepathData)
 times = load_matrix(filepathTimes)
@@ -25,15 +25,17 @@ dy = np.sqrt(ySqrAvg-(yAvg*yAvg))
 
 #probability_conservation_plot(len(x),probability)
 
-momentum_wavefunction = momentum_wavefunction(psi)
+momentum_wavefunction = momentum_wavefunc(psi)
 
 momenta_phase,momenta_norm_amp,momentum_prob = momenta_prob(momentum_wavefunction)
+
+#probability_conservation_plot(129,momentum_prob)
 
 #Alternative delta x
 
 # Yay it works! Now I haveto find an efficient way of calculating this!
 
-prob_deriv = prob_deriv(probability)
+prob_deriv = prob_derivative(probability)
 
 first_term_x,first_term_y = [],[]
 ft_x, ft_y = [],[]

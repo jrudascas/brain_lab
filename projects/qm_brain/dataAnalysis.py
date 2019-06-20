@@ -1,4 +1,4 @@
-from utils import *
+from projects.qm_brain.utils import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,6 +15,8 @@ chanLocs = load_matrix(filepathChanLoc)
 
 x, y, phase, normAmp, probability = process_eeg_data(data,chanLocs)
 
+psi = normAmp*np.exp(1j*phase)
+
 xAvg = probability@x
 yAvg = probability@y
 
@@ -26,7 +28,7 @@ dy = np.sqrt(ySqrAvg-(yAvg*yAvg))
 
 #probability_conservation_plot(len(x),probability)
 
-momentum_wavefunction = momentum_wavefunction(wavefunction_position)
+momentum_wavefunction = momentum_wavefunc(psi)
 
 momenta_phase,momenta_norm_amp,momentum_prob = momenta_prob(momentum_wavefunction)
 

@@ -321,10 +321,12 @@ def to_save_phi(phi , phiSum, num, path_output):
     filePhi = path_output + 'phi_' + str(num) + '.csv'
     filePhiSum = path_output + 'phiSum_' + str(num) + '.csv'
 
-    if not file_exists(filePhi):
-        np.savetxt(filePhi, np.asarray([phi]), delimiter=default_delimiter, fmt=format)
-    if not file_exists(filePhiSum):
-        np.savetxt(filePhiSum, np.asarray([phiSum]), delimiter=default_delimiter, fmt=format)
+    if makedir2(path_output):
+
+        if not file_exists(filePhi):
+            np.savetxt(filePhi, np.asarray([phi]), delimiter=default_delimiter, fmt=format)
+        if not file_exists(filePhiSum):
+            np.savetxt(filePhiSum, np.asarray([phiSum]), delimiter=default_delimiter, fmt=format)
 
 def save_list(list,path_output,state,network,type='tpm'):
     import numpy as np

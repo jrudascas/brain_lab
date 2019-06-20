@@ -104,15 +104,15 @@ def momentum_from_position(avg_position,ind=1):
             momentum.append(position / ind)
     return np.asarray(momentum)
 
-def momentum_wavefunction(pos_wavefunc,norm='ortho',axis=1):
+def momentum_wavefunc(pos_wavefunc,norm='ortho',axis=1):
     momentum_wavefunction = np.fft.fft(pos_wavefunc,norm=norm,axis=axis)
     return momentum_wavefunction
 
 def momenta_prob(momentum_wavefunction):
 
-    pAmp = np.abs(momentum_wavefunction).T
+    pAmp = np.abs(momentum_wavefunction)
 
-    pPhase = np.unwrap(np.angle(momentum_wavefunction)).T
+    pPhase = np.unwrap(np.angle(momentum_wavefunction))
 
     ampMag = np.sqrt(np.sum((pAmp * pAmp).T, axis=0))
 
@@ -122,7 +122,7 @@ def momenta_prob(momentum_wavefunction):
 
     del ampMag, pAmp
 
-    return pPhase, normpAmp, momentum_prob.T
+    return pPhase, normpAmp, momentum_prob
 
 def plot_avg(avg1,avg2,times,ylabel = 'Position (cm)',title = 'Average Position as Function of Time',path_output = None):
     f = plt.figure()
@@ -138,7 +138,7 @@ def plot_avg(avg1,avg2,times,ylabel = 'Position (cm)',title = 'Average Position 
         plt.savefig(path_output, '/' + 'plot.png', dpi=1200)
         plt.close()
 
-def prob_deriv(probability,ind=1):
+def prob_derivative(probability,ind=1):
     p = []
     for i in range(probability.shape[0]):
         if i == (probability.shape[0]-1):
