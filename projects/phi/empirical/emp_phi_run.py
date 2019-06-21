@@ -12,38 +12,37 @@ for state in brain_states:
     test_path_save = main_path + state + '/'
 
 
-    '''
     new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Auditory_parcellation_5/data/',
+                     '/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/',
+                     '/home/user/Desktop/data_phi/Propofol/' + state + '/DorsalAttn_parcellation_5/data/',
+                     '/home/user/Desktop/data_phi/Propofol/' + state + '/VentralAttn_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/CinguloOperc_parcellation_5/data/',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/DorsalAttn_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/FrontoParietal_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/RetrosplenialTemporal_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/SMhand_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/SMmouth_parcellation_5/data/',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/VentralAttn_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/Visual_parcellation_5/data/']
-    '''
-    new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/']
+    #new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/']
 
 
     tpmList, freqList = [], []
 
 
-    for fold in new_path_list:
-        for network in networks:
-            for i in range(17):
-                sub_num = i + 1
-                freq_path = fold+'freq_'+str(sub_num)+'.csv'
-                tpm_path = fold+'tpm_'+str(sub_num)+'.csv'
-                freq = load_matrix(freq_path)
-                tpm = load_matrix(tpm_path)
-                freqList.append(freq)
-                tpmList.append(tpm)
+    for j in range(len(networks)):
+        fold = new_path_list[j]
+        network = networks[j]
+        for i in range(17):
+            sub_num = i + 1
+            freq_path = fold + 'freq_' + str(sub_num) + '.csv'
+            tpm_path = fold + 'tpm_' + str(sub_num) + '.csv'
+            freq = load_matrix(freq_path)
+            tpm = load_matrix(tpm_path)
+            freqList.append(freq)
+            tpmList.append(tpm)
 
-            save_list(freqList,test_path_save,state,network,type='freq')
-            save_list(tpmList,test_path_save,state,network,type='tpm')
-            tpmList, freqList = [], []
+        save_list(freqList, test_path_save, state, network, type='freq')
+        save_list(tpmList, test_path_save, state, network, type='tpm')
+        tpmList, freqList = [], []
 
 for network in networks:
 

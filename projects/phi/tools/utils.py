@@ -343,3 +343,36 @@ def save_list(list,path_output,state,network,type='tpm'):
                 np.savetxt(filename1 + '.csv', np.asarray(list), delimiter=default_delimiter, fmt=format)
             elif type == 'tpm':
                 np.save(filename1,np.asarray(list))
+
+def viola_plot_n_save(list,path,title):
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    filename1 = path + '/' + title + '.npy'
+    if makedir2(path):
+
+        if not file_exists(filename1):
+            np.save(filename1, np.asarray([list]))
+
+    tick_pos = np.arange(len(list))
+    tick_title = ['Awake','Mild','Deep','Recovery']
+    fig = plt.figure()
+    plt.violinplot(list, tick_pos,showmeans=True, showextrema=True, showmedians=False)
+    plt.title(title +' of TPM')
+    plt.xticks(tick_pos,tick_title)
+
+    filename2 = path + '/' + title + '.png'
+
+    if not file_exists(filename2):
+        plt.savefig(filename2)
+
+    plt.close(fig)
+
+def save_hubs(hub_list,path):
+    import numpy as np
+
+    filename1 = path + '/Hubs'
+
+    if makedir2(path):
+        if not file_exists(filename1+'.npy'):
+            np.save(filename1,np.asarray([hub_list]))
