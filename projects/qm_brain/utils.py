@@ -24,11 +24,17 @@ def file_exists(filename):
     else:
         return False
 
-def process_eeg_data(data,chanLocs):
-    x = chanLocs[:, 0]
-    y = chanLocs[:, 1]
+def hilberto(data):
+    assert len(data.shape) == 2
+    if data.shape[1]>data.shape[0]:
+        return hilbert(data,axis=1)
+    else:
+        return hilbert(data,axis=0).T
 
-    hilbertTransData = hilbert(data, axis=1)
+def process_eeg_data(data):
+
+
+    hilbertTransData = hilberto(data)
 
     amplitude = np.abs(hilbertTransData).T
 
@@ -41,9 +47,9 @@ def process_eeg_data(data,chanLocs):
 
     probability = normAmp * normAmp
 
-    del ampMag, amplitude, hilbertTransData, chanLocs
+    del ampMag, amplitude, hilbertTransData
 
-    return x, y, phase, normAmp, probability
+    return phase, normAmp, probability
 
 def animation_station2(xAvg,yAvg,xInit,yInit):
     fig,ax = plt.subplots(figsize=(10, 6))
@@ -149,12 +155,17 @@ def prob_derivative(probability,ind=1):
             p.append(p_i / ind)
     return np.asarray(p)
 
-def save_uncertainty(delta,path,name):
+def save_file(data,path,name):
 
     default_delimiter = ','
     format = '%1.5f'
 
-    file = path + str(name) + '.csv'
+    if len(data.shape) <= 2:
+        file = path + str(name) + '.csv'
 
-    if not file_exists(file):
-        np.savetxt(file, np.asarray(delta), delimiter=default_delimiter, fmt=format)
+        if not file_exists(file):
+            np.savetxt(file, np.asarray(data), delimiter=default_delimiter, fmt=format)
+    else:
+        file = path + str(name) + '.npy'
+        if not file_exists(file):
+            np.save(file,np.asarray([data]))

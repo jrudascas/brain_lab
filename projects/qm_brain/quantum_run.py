@@ -9,7 +9,7 @@ for i in range(num_subjects):
 
     subject_path = main_path + str(i + 1) + '/'
 
-    if not file_exists(subject_path + 'DeltaX.csv'):
+    if file_exists(subject_path + 'DeltaX.csv'):
 
         filepathChanLoc = subject_path + 'chanLocXY.csv'
         filepathData = subject_path + 'data.csv'
@@ -19,7 +19,10 @@ for i in range(num_subjects):
         times = load_matrix(filepathTimes)
         chanLocs = load_matrix(filepathChanLoc)
 
-        x, y, phase, normAmp, probability = process_eeg_data(data, chanLocs)
+        x = chanLocs[:, 0]
+        y = chanLocs[:, 1]
+
+        phase, normAmp, probability = process_eeg_data(data)
 
         psi = normAmp * np.exp(1j * phase)
 
@@ -46,22 +49,18 @@ for i in range(num_subjects):
         second_term_x, second_term_y = [], []
         st_x, st_y = [], []
 
+
         for i in range(len(times)):
 
-            a1 = np.square(x)
-            a2 = np.square(prob_deriv[i, :])
-            a3 = ((1 / momentum_prob[i, :]) - 1)
+            a1 = np.square(x) * np.square(prob_deriv[i, :]) * ((1 / momentum_prob[i, :]) - 1)
+            a2 = np.square(y) * np.square(prob_deriv[i, :]) * ((1 / momentum_prob[i, :]) - 1)
 
-            b = a1 * a2
-            c = b * a3
+            b1 = np.sum(a1)
+            b2 = np.sum(a2)
 
-            for j in range(len(x)):
-                ft_x.append(np.square(x[j]) * np.square(prob_deriv[i, j]) * ((1 / momentum_prob[i, j]) - 1))
-                ft_y.append(np.square(y[j]) * np.square(prob_deriv[i, j]) * ((1 / momentum_prob[i, j]) - 1))
-            first_term_x.append(sum(ft_x))
-            first_term_y.append(sum(ft_y))
-            ft_x = []
-            ft_y = []
+            first_term_x.append(b1)
+            first_term_y.append(b2)
+
 
             for k in range(len(x)):
                 for l in range(len(x)):
@@ -95,11 +94,11 @@ for i in range(num_subjects):
         plt.ylabel('Uncertainty')
         plt.savefig(subject_path + 'UncertaintyY.png', dpi=600)
 
-        save_uncertainty(dx, subject_path, 'DeltaX')
-        save_uncertainty(dy, subject_path, 'DeltaY')
-        save_uncertainty(dpx, subject_path, 'DeltaPX')
-        save_uncertainty(dpy, subject_path, 'DeltaPY')
-        save_uncertainty(uncertainty_x, subject_path, 'DeltaXDeltaPX')
-        save_uncertainty(uncertainty_y, subject_path, 'DeltaYDeltaPY')
+        save_file(dx, subject_path, 'DeltaX')
+        save_file(dy, subject_path, 'DeltaY')
+        save_file(dpx, subject_path, 'DeltaPX')
+        save_file(dpy, subject_path, 'DeltaPY')
+        save_file(uncertainty_x, subject_path, 'DeltaXDeltaPX')
+        save_file(uncertainty_y, subject_path, 'DeltaYDeltaPY')
     else:
         print('The file ', subject_path + 'DeltaX.csv', ' already exists!')

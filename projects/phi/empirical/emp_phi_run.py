@@ -22,7 +22,6 @@ for state in brain_states:
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/SMhand_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/SMmouth_parcellation_5/data/',
                     '/home/user/Desktop/data_phi/Propofol/' + state + '/Visual_parcellation_5/data/']
-    #new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5/data/']
 
 
     tpmList, freqList = [], []

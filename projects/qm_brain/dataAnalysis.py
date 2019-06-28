@@ -13,7 +13,10 @@ times = load_matrix(filepathTimes)
 
 chanLocs = load_matrix(filepathChanLoc)
 
-x, y, phase, normAmp, probability = process_eeg_data(data,chanLocs)
+x = chanLocs[:, 0]
+y = chanLocs[:, 1]
+
+phase, normAmp, probability = process_eeg_data(data)
 
 psi = normAmp*np.exp(1j*phase)
 

@@ -9,7 +9,7 @@ mainPath = '/home/user/Desktop/data_phi/phi/Aud/'
 
 phiList,phiSumList =[],[]
 
-for i in range(15):
+for i in range(17):
     filePathPhi = mainPath + 'phi_' + str(i) + '.csv'
     filePathSum =  mainPath + 'phiSum_' + str(i) + '.csv'
 

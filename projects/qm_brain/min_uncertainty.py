@@ -6,19 +6,12 @@ from matplotlib.backends.backend_pgf import FigureCanvasPgf
 matplotlib.backend_bases.register_backend('pdf',FigureCanvasPgf)
 
 
-times= load_matrix('/home/user/Desktop/QMBrain/EEG Data/2/times.csv')
+times= load_matrix('/home/user/Desktop/QMBrain/New Data/times.csv')
 
-uncertainity_x1 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/1/DeltaXDeltaPX.csv')
-uncertainity_y1 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/1/DeltaYDeltaPY.csv')
+uncertainity_x1 = load_matrix('/home/user/Desktop/QMBrain/New Data/Cond10/10/DeltaXDeltaPX.csv')
+uncertainity_y1 = load_matrix('/home/user/Desktop/QMBrain/New Data/Cond10/10/DeltaYDeltaPY.csv')
 
-uncertainity_x2 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/2/DeltaXDeltaPX.csv')
-uncertainity_y2 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/2/DeltaYDeltaPY.csv')
 
-uncertainity_x3 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/3/DeltaXDeltaPX.csv')
-uncertainity_y3 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/3/DeltaYDeltaPY.csv')
-
-uncertainity_x4 = load_matrix('/home/user/Desktop/QMBrain/EEG Data/4/DeltaXDeltaPX.csv')
-uncertainity_y4= load_matrix('/home/user/Desktop/QMBrain/EEG Data/4/DeltaYDeltaPY.csv')
 
 minimum_x = np.min(uncertainity_x1)
 minimum_y = np.min(uncertainity_y1)
@@ -28,6 +21,8 @@ print('The minimum uncertainty for y is: ', minimum_y)
 
 print('The maximum uncertainty for x is: ', np.max(uncertainity_x1))
 print('The maximum uncertainty for y is: ', np.max(uncertainity_y1))
+
+plt.plot()
 
 
 pgf_with_latex = {
