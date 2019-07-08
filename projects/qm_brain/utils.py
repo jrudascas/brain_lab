@@ -24,6 +24,13 @@ def file_exists(filename):
     else:
         return False
 
+def makedir2(path):
+    import os
+    if not os.path.exists(path):
+        os.mkdir(path)
+        return True
+    return True
+
 def hilberto(data):
     assert len(data.shape) == 2
     if data.shape[1]>data.shape[0]:
@@ -75,6 +82,21 @@ def animation_station2(xAvg,yAvg,xInit,yInit):
                                    frames=300, interval=20)  # , blit=True)
 
     anim.save('animationTest.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+
+def animate_anigreat(most_prob_elec_x,most_prob_elec_y,xIn,yIn,sub_num,condition,numtime=300):
+    for i in range(numtime):
+        fig = plt.figure(figsize=(480/96, 480 / 96), dpi=96)
+        plt.scatter(xIn,yIn,alpha=0.4)
+        plt.scatter(most_prob_elec_x[i], most_prob_elec_y[i],edgecolors="grey", linewidth=2)
+        plt.xlim(-10, 10)
+        plt.ylim(-8, 8)
+        filename = 'step' + str(i) + '.png'
+        plt.savefig(filename, dpi=96)
+        plt.gca()
+        plt.close(fig)
+    bashCommand = "convert -delay 50 *.png Sub_"+str(sub_num)+"_"+condition+".gif"
+    os.system(bashCommand)
+
 
 def animation_station(xAvg,yAvg,xIn,yIn,xerr,yerr):
     for i in range(300):

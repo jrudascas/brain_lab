@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as ss
 from projects.phi.tools.utils import *
 
-mainPath = '/home/user/Desktop/data_phi/phi/Aud/'
+mainPath = '/home/user/Desktop/data_phi/phi/Vis/'
 
 phiList,phiSumList =[],[]
 
