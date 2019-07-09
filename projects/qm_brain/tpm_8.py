@@ -38,31 +38,29 @@ for condition in condition_list:
 
         phase, normAmp, probability = process_eeg_data(data)
 
-        times = probability.shape[0]
-
         occipR = np.sum(probability[:,occipital_R_ind],axis=-1)
         occipL = np.sum(probability[:, occipital_L_ind], axis=-1)
         occipC = np.sum(probability[:, occipital_C_ind], axis=-1)
 
-        occip_tot = occipL+occipR+occipC
+        occip_tot = occipL+occipR
 
         parR = np.sum(probability[:, parietal_R_ind], axis=-1)
         parL = np.sum(probability[:, parietal_L_ind], axis=-1)
         parC = np.sum(probability[:, parietal_C_ind], axis=-1)
 
-        par_tot = parL + parR +  parC
+        par_tot = parL + parR
 
         postR = np.sum(probability[:, posteriorf_R_ind], axis=-1)
         postL = np.sum(probability[:, posteriorf_L_ind], axis=-1)
         postC = np.sum(probability[:, posteriorf_C_ind], axis=-1)
 
-        post_tot = postL + postR + postC
+        post_tot = postL + postR
 
         antR = np.sum(probability[:, anteriorf_R_ind], axis=-1)
         antL = np.sum(probability[:, anteriorf_L_ind], axis=-1)
         antC = np.sum(probability[:, anteriorf_C_ind], axis=-1)
 
-        ant_tot = antL + antR + antC
+        ant_tot = antL + antR
 
         sect_probs = np.array([occipR,occipL,parR,parL,postR,postL,antR,antL])
         large_sect_probs = np.array([occip_tot,par_tot,post_tot,ant_tot])
@@ -70,29 +68,6 @@ for condition in condition_list:
         max_inds = np.argmax(sect_probs,axis=0)
 
         m = np.max(max_inds)+1
-
-        probTotOccR = (1/times) * np.sum(occipR)
-        probTotOccL = (1/times) * np.sum(occipL)
-        probTotOccC = (1/times) * np.sum(occipC)
-
-        probTotParR = (1/times) * np.sum(parR)
-        probTotParL = (1/times) * np.sum(parL)
-        probTotParC = (1/times) * np.sum(parC)
-
-        probTotPostR = (1/times) * np.sum(postR)
-        probTotPostL = (1/times) * np.sum(postL)
-        probTotPostC = (1/times) * np.sum(postC)
-
-        probTotAntR = (1/times) * np.sum(antR)
-        probTotAntL = (1/times) * np.sum(antL)
-        probTotAntC = (1/times) * np.sum(antC)
-
-        prob_arr = np.array([probTotOccR,probTotOccL,probTotOccC,probTotParR,probTotParL,probTotParC,probTotPostR,probTotPostL,probTotPostC,probTotAntR,probTotAntL,probTotAntC])
-
-        totProb = np.sum(prob_arr)
-
-        print(totProb)
-
 
         tpm = np.zeros((m,m))
         norm = np.zeros((m,1))
@@ -105,3 +80,34 @@ for condition in condition_list:
 
         tpm = tpm/norm
         tpm[np.isnan(tpm)] = 0
+
+
+        if makedir2(subject_path):
+            default_delimiter = ','
+            format = '%1.5f'
+            filenameTPM = subject_path + '/' + 'tpm_' + str(i+1) + '.csv'
+            filenameHist = subject_path + '/' + 'hist_' + str(i + 1) + '.csv'
+
+            if not file_exists(filenameTPM):
+                np.savetxt(filenameTPM, tpm, delimiter=default_delimiter, fmt=format)
+
+            if not file_exists(filenameHist):
+                np.savetxt(filenameHist, max_inds, delimiter=default_delimiter, fmt=format)
+
+
+
+        f1 = plt.figure()
+        plt.hist(max_inds,density=True,bins=8)
+        plt.title('Histogram of 8 Regions')
+        plt.xlabel('Regions')
+        plt.xticks(np.arange(8),['Occiptal R','Occiptal L','Parietal R','Parietal L','Posterior R','Posterior L','Anterior R','Anterior L'])
+        plt.show()
+
+        f2 = plt.figure()
+        plt.imshow(tpm,cmap='plasma',vmin=0,vmax=1)
+        plt.title('Transition Probability Matrix')
+        plt.colorbar()
+        plt.show()
+
+
+        

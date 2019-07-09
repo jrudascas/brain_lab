@@ -80,9 +80,9 @@ statInd, pvalInd = ss.ttest_ind(count10,count12)
 statRel,pvalRel = ss.ttest_rel(count10,count12)
 statMW,pvalMW = ss.mannwhitneyu(count10,count12)
 
-statIndTPM, pvalIndTPM = ss.ttest_ind(np.scond10_avg_tpm,cond12_avg_tpm)
-statRelTPM,pvalRelTPM = ss.ttest_rel(cond10_avg_tpm,cond12_avg_tpm)
-statMWTPM,pvalMWTPM = ss.mannwhitneyu(cond10_avg_tpm,cond12_avg_tpm)
+statIndTPM, pvalIndTPM = ss.ttest_ind(cond10_avg_tpm.flatten(),cond12_avg_tpm.flatten())
+statRelTPM,pvalRelTPM = ss.ttest_rel(cond10_avg_tpm.flatten(),cond12_avg_tpm.flatten())
+statMWTPM,pvalMWTPM = ss.mannwhitneyu(cond10_avg_tpm.flatten(),cond12_avg_tpm.flatten())
 
 
 
