@@ -58,6 +58,23 @@ def process_eeg_data(data):
 
     return phase, normAmp, probability
 
+def process_eeg_data2(data):
+
+
+    hilbertTransData = hilberto(data)
+
+    amplitude = np.abs(hilbertTransData).T
+
+    ampMag = np.sqrt(np.sum((amplitude * amplitude).T, axis=0))
+
+    normAmp = (np.asarray(amplitude.T) / np.asarray(ampMag)).T
+
+    probability = normAmp * normAmp
+
+    del ampMag, amplitude,normAmp
+
+    return probability, hilbertTransData
+
 def animation_station2(xAvg,yAvg,xInit,yInit):
     fig,ax = plt.subplots(figsize=(10, 6))
     ax.set(xlim=(-10,10),ylim=(-8,8))
@@ -192,3 +209,27 @@ def save_file(data,path,name):
         file = path + str(name) + '.npy'
         if not file_exists(file):
             np.save(file,np.asarray([data]))
+
+
+def save_tpm(tpm,path_output,num):
+    import numpy as np
+    from nilearn import plotting
+    import matplotlib.pyplot as plt
+    path_output = path_output + '/data'
+    if makedir2(path_output):
+        default_delimiter = ','
+        format = '%1.5f'
+        filename1 = path_output + '/' + 'tpm_'+ str(num) + '.csv'
+
+        if not file_exists(filename1):
+            np.savetxt(filename1, tpm, delimiter=default_delimiter, fmt=format)
+
+        fig, ax = plt.subplots()
+
+        plotting.plot_matrix(tpm, figure=fig, vmax=1, vmin=0)
+
+        filename2 = path_output + '/' + 'plots_' + str(num)+'.png'
+        if not file_exists(filename2):
+            fig.savefig(filename2, dpi=1200)
+
+        plt.close(fig)

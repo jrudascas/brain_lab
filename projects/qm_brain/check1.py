@@ -1,6 +1,5 @@
-from projects.qm_brain.utils import *
+from projects.qm_brain.utils.utils import *
 import numpy as np
-import matplotlib.pyplot as plt
 
 num_subjects = 15
 main_path = '/home/user/Desktop/QMBrain/New Data/'

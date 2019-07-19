@@ -3,7 +3,7 @@ from numpy.random import permutation, random
 import time
 import multiprocessing
 import math
-from generalize_ising_model.ising_utils import to_find_critical_temperature
+from projects.generalize_ising_model.tools.utils import to_find_critical_temperature
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -63,7 +63,7 @@ def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None):
 
 def compute_par(values):
     n = values[0].shape[-1]
-    no_flip = 10 * n ** 2
+    no_flip = 100 * n ** 2
     #no_flip = 10 * n ** 2
     avg_therm = no_flip * (1 - values[4])
 
