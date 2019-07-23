@@ -319,9 +319,8 @@ class PipelinefMRI(Pipeline):
         infosource.iterables = [('subject_id', subject_list)]
 
         # SelectFiles - to grab the data (alternativ to DataGrabber)
-        structural_dir = '/home/brainlab/Desktop/Rudas/Data/Propofol/Structurals/'
-        anat_file = opj(structural_dir, '{subject_id}', 't1.nii')
-        func_file = opj('{subject_id}', 'fmri.nii')
+        anat_file = opj('{subject_id}', 'data/unprocessed/3T/T1w_acpc_dc_restore_1.25.nii')
+        func_file = opj('{subject_id}', 'data/unprocessed/3T/rfMRI_REST1_LR/3T_rfMRI_REST1_LR.nii.gz')
 
         #anat_file = opj('{subject_id}/anat/', 'data.nii')
         #func_file = opj('{subject_id}/func/', 'data.nii')

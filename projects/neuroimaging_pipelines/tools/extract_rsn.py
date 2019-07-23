@@ -2,14 +2,15 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 import nibabel as nib
-from generalize_ising_model.ising_utils import makedir
+from projects.generalize_ising_model.tools.utils import makedir
 import scipy.ndimage as ndim
 
 parcellation_rsn_path = '/home/brainlab/Desktop/Rudas/Data/Parcellation/rsn/Parcels_MNI_222.nii'
 parcellation_rsn_labels_path = '/home/brainlab/Desktop/Rudas/Data/Parcellation/rsn/Parcels.csv'
 output_path = '/home/brainlab/Desktop/rsn_parcellations/'
 
-n_groups = [2,3,4,5,6,7,8,9,10]
+#n_groups = [2,3,4,5,6,7,8,9,10]
+n_groups = [40]
 
 img = nib.load(parcellation_rsn_path)
 data_img = img.get_data()
