@@ -57,7 +57,7 @@ class PipelineDWI(Pipeline):
         anat_file = opj('{subject_id}/data/T1w/', 'T1w_acpc_dc_restore_1.25.nii.gz')
         dwi_file = opj('{subject_id}/data/T1w/Diffusion/', 'data.nii.gz')
         bvec_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvecs')
-        bval_file = opj('{subject_id}/dwi/Diffusion/', 'bvals')
+        bval_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvals')
 
         templates = {'anat': anat_file,
                      'dwi': dwi_file,
@@ -319,9 +319,8 @@ class PipelinefMRI(Pipeline):
         infosource.iterables = [('subject_id', subject_list)]
 
         # SelectFiles - to grab the data (alternativ to DataGrabber)
-        structural_dir = '/home/brainlab/Desktop/Rudas/Data/Propofol/Structurals/'
-        anat_file = opj(structural_dir, '{subject_id}', 't1.nii')
-        func_file = opj('{subject_id}', 'fmri.nii')
+        anat_file = opj('{subject_id}', 'data/unprocessed/3T/T1w_acpc_dc_restore_1.25.nii')
+        func_file = opj('{subject_id}', 'data/unprocessed/3T/rfMRI_REST1_LR/3T_rfMRI_REST1_LR.nii.gz')
 
         #anat_file = opj('{subject_id}/anat/', 'data.nii')
         #func_file = opj('{subject_id}/func/', 'data.nii')

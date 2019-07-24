@@ -13,10 +13,10 @@ tpm_path_recovery = '/home/user/Desktop/data_phi/Propofol/Recovery/Default_parce
 freq_path_recovery = '/home/user/Desktop/data_phi/Propofol/Recovery/Default_parcellation_5/data/freq_2.csv'
 
 
-path_output_awake = '/home/user/Desktop/data_phi/phi/concat/Awake/'
-path_output_mild = '/home/user/Desktop/data_phi/phi/concat/Mild/'
-path_output_deep = '/home/user/Desktop/data_phi/phi/concat/Deep/'
-path_output_recovery = '/home/user/Desktop/data_phi/phi/concat/Recovery/'
+path_output_awake = '/home/user/Desktop/data_phi/phi/tests/concat/Awake/'
+path_output_mild = '/home/user/Desktop/data_phi/phi/tests/concat/Mild/'
+path_output_deep = '/home/user/Desktop/data_phi/phi/tests/concat/Deep/'
+path_output_recovery = '/home/user/Desktop/data_phi/phi/tests/concat/Recovery/'
 
 path_output_list = [path_output_awake,path_output_mild,path_output_deep,path_output_recovery]
 

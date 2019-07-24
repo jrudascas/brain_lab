@@ -1,12 +1,12 @@
 import os
 
-folder_path = '/home/brainlab/Desktop/Rudas/Data/hcp_100'
+folder_path = '/home/brainlab/Desktop/Rudas/Data/hcp_100/output/workingdir/preproc'
 
-'''
+
 cont = 1
 for (root, dirs, files) in os.walk(folder_path):
     for file in sorted(files):
-        if file == 'fmri_cleaned.nii':
+        if file == 'tractography2.trk':
             try:
                 os.remove(root + '/' + file)
             except Exception:
@@ -80,10 +80,13 @@ s = ['899885_3T_Diffusion_preproc',
                 '128632_3T_Diffusion_preproc',
                 '128127_3T_Diffusion_preproc',
                 '127933_3T_Diffusion_preproc']
+'''
 
-
+'''
 cont = 1
 for sub in s:
     path = folder_path + '/' + sub
     for file in os.listdir(path):
         os.rename(path + '/' + file, path + '/data')
+        
+'''

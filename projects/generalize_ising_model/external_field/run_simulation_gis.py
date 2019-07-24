@@ -1,8 +1,8 @@
 import time
 import numpy as np
-from generalize_ising_model.external_field.core_new import generalized_ising
+from projects.generalize_ising_model.external_field.core_new import generalized_ising
 from os import walk
-from generalize_ising_model.ising_utils import to_normalize, save_results, makedir
+from projects.generalize_ising_model.tools.utils import to_normalize, save_results, makedir
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
