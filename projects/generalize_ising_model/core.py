@@ -7,7 +7,7 @@ from .tools.utils import to_find_critical_temperature
 import warnings
 
 warnings.filterwarnings("ignore")
-n_cpu = multiprocessing.cpu_count() - 2
+n_cpu = multiprocessing.cpu_count() - 1
 
 
 # @numba.jit(nopython=True)

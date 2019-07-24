@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import os
 import matplotlib.patches as mpatches
 
+'''
 
 path_simulation_output = ['/home/brainlab/Desktop/experiment2/simulation/0others/karate_club',
                           '/home/brainlab/Desktop/experiment2/simulation/13_geometric/geometric',
@@ -29,17 +30,17 @@ path_simulation_output = ['/home/brainlab/Desktop/experiment2/simulation/15_biol
                           #'/home/brainlab/Desktop/experiment2/simulation/15_biological/7mouse_visual_cortex',
                           '/home/brainlab/Desktop/experiment2/simulation/15_biological/8parcellation_48',
                           '/home/brainlab/Desktop/experiment2/simulation/15_biological/9parcellation_84',
-                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/99parcellation_112'
-                          ]
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/99parcellation_112',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/999celegant_new',
+                          '/home/brainlab/Desktop/experiment2/simulation/15_biological/999parcellation_333']
                           ##'/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/9_biological/1mouse_visual_cortex',
                           ##'/home/brainlab/Desktop/Rudas/Data/Ising/experiment_2/simulation/11_social/caveman_graph',
 
                           #]
-'''
 
 l = len(path_simulation_output)
 
-
+'''
 labels_ = [#'moreno_seventh_seventh',
            'karate_club',
            'geometric',
@@ -51,7 +52,6 @@ labels_ = [#'moreno_seventh_seventh',
 '''
 labels_ = ['mean_hcp_det',
            'mean_hcp_prob',
-           #'c-elegant',
            'cat-mixed-species_brain',
            'macaque-rhesus_brain',
            'enzimes_g16',
@@ -60,10 +60,12 @@ labels_ = ['mean_hcp_det',
            #'mouse_visual_cortex',
            'single_subject_hcp_48',
            'single_subject_hcp_84',
-           'single_subject_hcp_112']
+           'single_subject_hcp_112',
+           'c-elegant',
+           'single_subject_hcp_333']
            #'single_subject_hcp_333'
            #'caveman_graph',
-'''
+
 
 dimensionality_ = []
 
