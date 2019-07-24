@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import os
 from scipy.signal import hilbert
+from pynufft import NUFFT_cpu
 
 def load_matrix(filepath):
     extension = filepath.split('.')[-1]
@@ -233,3 +234,117 @@ def save_tpm(tpm,path_output,num):
             fig.savefig(filename2, dpi=1200)
 
         plt.close(fig)
+
+def zip_x_y(x,y):
+    assert len(x) == len(y)
+    return np.stack((x,y))
+
+
+def data_1d_to_2d(data,x,y):
+
+    # Get the indices of the original x-positions that lead to a sorted (- to +) vector
+    x_inds = np.argsort(x)
+
+    # Actually sort the y vector from (- to +)
+    y_sorted = np.sort(y)
+
+    flag = False
+
+    assert len(data.shape) == 2
+    if data.shape[1] > data.shape[0]:
+        flag = True
+        data = data.T
+
+    new_dat = np.zeros(shape=(len(y), len(x), data.shape[0]),dtype=np.complex64)
+
+    y_count = 0
+
+    for count, x_ind in enumerate(x_inds):
+
+        y_loc = np.where(y_sorted == y[x_ind])
+
+        if np.squeeze(np.squeeze(y_loc).shape) > 1:
+            y_loc = np.squeeze(y_loc)[y_count]
+
+            y_count += 1
+
+        new_dat[y_loc, count, :] = data[:, x_ind]
+
+    if flag is True:
+        new_dat = new_dat.T
+
+    del x_inds, y_sorted, flag, data, y_count,y_loc, count, x_ind
+
+    return new_dat
+
+def data_2d_to_1d(data,x,y):
+    # Get the indices of the original x-positions that lead to a sorted (- to +) vector
+    x_inds = np.argsort(x)
+
+    # Actually sort the y vector from (- to +)
+    y_sorted = np.sort(y)
+
+
+    size = data.shape
+
+    assert len(size) == 3
+    assert size[2] == size[1]
+    assert size[0] > size[1]
+
+    new_dat = np.zeros(shape=(size[0],size[1]))
+
+    y_count = 0
+
+    for count, x_ind in enumerate(x_inds):
+
+        y_loc = np.where(y_sorted == y[x_ind])
+
+        if np.squeeze(np.squeeze(y_loc).shape) > 1:
+            y_loc = np.squeeze(y_loc)[y_count]
+
+            y_count += 1
+
+        new_dat[:,count] = data[:,y_loc,x_ind]
+
+    return new_dat
+
+
+
+def non_uniform_fft(pos_stack,pos_wavefun,solver,interp_size):
+
+    assert len(pos_wavefun.shape) == 2
+
+
+    NufftObj = NUFFT_cpu()
+
+    om = pos_stack
+    Nd = (len(pos_stack[0]),len(pos_stack[1]))
+    Kd = Nd
+    Jd = (interp_size,interp_size)
+
+    NufftObj.plan(om,Nd,Kd,Jd)
+
+    y = NufftObj.forward(pos_wavefun)
+
+    mom_wavefun_1 = NufftObj.solve(y,solver=solver )
+
+    #mom_wavefun_2 = NufftObj.adjoint(y)
+
+    return mom_wavefun_1 #, mom_wavefun_2
+
+
+def fft_time_warp(pos_stack, pos_wavefun,solver='cg',interp_size = 8):
+    size = pos_wavefun.shape
+
+    assert len(size) == 3
+    assert size[2] == size[1]
+    assert size[0] > size[1]
+
+
+    momenta_wavefun = np.zeros(shape=(size[0], size[1], size[2]),dtype=np.complex64)
+
+    for t in range(pos_wavefun.shape[0]):
+        momenta_wavefun[t,...] = non_uniform_fft(pos_stack,pos_wavefun[t,...],solver,interp_size)
+
+    return momenta_wavefun
+
