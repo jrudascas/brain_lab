@@ -22,7 +22,7 @@ def initial_spin(N, type='digital'):
 
 
 # Montecarlo Simulation - Metroplolis Algorithm
-def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi_variables=False, type='digital'):
+def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi_variables=False, type='digital', return_tc=False):
     no_spin = len(spin_vec)
     static, moving = np.triu_indices(no_spin, k=1)
     static = static.astype(np.int16)
@@ -100,13 +100,15 @@ def monte_carlo_metropolis(J, spin_vec, t, iterations, thermalize_time=None, phi
 
 def compute_par(values):
     n = values[0].shape[-1]
-    #no_flip = 100 * n ** 2
-    no_flip = 10 * n ** 2
+    no_flip = 100 * n ** 2
+    #no_flip = 10 * n ** 2
     avg_therm = no_flip * (1 - values[4])
 
-    E, M, S, H, spin_mean = [], [], [], [], []
+    E, M, S, H, tc, spin_mean = [], [], [], [], [], []
     phi_variables = values[6]
     type = values[7]
+    return_tc = values[8]
+
     simulated_fc = np.zeros((n, n, values[2] - values[1]))
 
     cont = 0
@@ -131,16 +133,23 @@ def compute_par(values):
         for sim in range(values[3]):
             simulation[:, sim] = monte_carlo_metropolis(values[0], spin_vec, ts[tT], n, phi_variables=phi_variables, type=type)
 
+        tc.append(simulation)
         simulated_fc[..., cont] = np.corrcoef(simulation)
         cont += 1
 
-    if phi_variables:
-        return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]), np.asarray(spin_mean))
+    if return_tc:
+        if phi_variables:
+            return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]), np.asarray(spin_mean), np.asarray(tc))
+        else:
+            return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]), np.asarray(tc))
     else:
-        return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]))
+        if phi_variables:
+            return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]), np.asarray(spin_mean))
+        else:
+            return (np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(simulated_fc), np.copy(values[1]), np.copy(values[2]))
 
 
-def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=100, thermalize_time=0.3, temperature_distribution ='lineal', phi_variables = False, type='digital'):
+def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=100, thermalize_time=0.3, temperature_distribution ='lineal', phi_variables = False, return_tc = False, type='digital'):
     n = Jij.shape[-1]
 
     if temperature_distribution == 'lineal':
@@ -156,9 +165,9 @@ def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=1
 
     for next in range(n_cpu):
         if (next + 1) * step_len > temperature_parameters[2]:
-            l.append((Jij, previus, temperature_parameters[2], n_time_points, thermalize_time, ts, phi_variables, type))
+            l.append((Jij, previus, temperature_parameters[2], n_time_points, thermalize_time, ts, phi_variables, type, return_tc))
         else:
-            l.append((Jij, previus, int((next + 1) * step_len), n_time_points, thermalize_time, ts, phi_variables, type))
+            l.append((Jij, previus, int((next + 1) * step_len), n_time_points, thermalize_time, ts, phi_variables, type, return_tc))
 
         previus = int((next + 1) * step_len)
 
@@ -167,29 +176,59 @@ def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=1
     simulated_fc = np.zeros((n, n, len(ts)))
     E, M, S, H = np.zeros(len(ts)), np.zeros(len(ts)), np.zeros(len(ts)), np.zeros(len(ts))
 
-    if phi_variables:
-        spin_mean = np.zeros((np.power(2, n), len(ts)))
 
-        for i in range(results.shape[0]):
-            E[results[i, 5]:results[i, 6]] = results[i, 0]
-            M[results[i, 5]:results[i, 6]] = results[i, 1]
-            S[results[i, 5]:results[i, 6]] = results[i, 2]
-            H[results[i, 5]:results[i, 6]] = results[i, 3]
-            simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
+    if return_tc:
+        tc = np.zeros(shape=(n_time_points,Jij.shape[0],len(ts)))
 
-            spin_mean[:, results[i, 5]:results[i, 6]] = np.transpose(results[i, 7])
+        if phi_variables:
+            spin_mean = np.zeros((np.power(2, n), len(ts)))
 
-        critical_temperature = to_find_critical_temperature(S, ts)
-        return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(spin_mean)
+            for i in range(results.shape[0]):
+                E[results[i, 5]:results[i, 6]] = results[i, 0]
+                M[results[i, 5]:results[i, 6]] = results[i, 1]
+                S[results[i, 5]:results[i, 6]] = results[i, 2]
+                H[results[i, 5]:results[i, 6]] = results[i, 3]
+                simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
+
+                spin_mean[:, results[i, 5]:results[i, 6]] = np.transpose(results[i, 7])
+                tc[:,:,results[i, 5]:results[i, 6]] = np.transpose(results[i, 8])
+            critical_temperature = to_find_critical_temperature(S, ts)
+            return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(spin_mean), np.copy(tc)
+        else:
+            for i in range(results.shape[0]):
+                E[results[i, 5]:results[i, 6]] = results[i, 0]
+                M[results[i, 5]:results[i, 6]] = results[i, 1]
+                S[results[i, 5]:results[i, 6]] = results[i, 2]
+                H[results[i, 5]:results[i, 6]] = results[i, 3]
+                simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
+                tc[:, :, results[i, 5]:results[i, 6]] = results[i, 8]
+            critical_temperature = to_find_critical_temperature(S, ts)
+
+            return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(tc)
     else:
-        for i in range(results.shape[0]):
-            E[results[i, 5]:results[i, 6]] = results[i, 0]
-            M[results[i, 5]:results[i, 6]] = results[i, 1]
-            S[results[i, 5]:results[i, 6]] = results[i, 2]
-            H[results[i, 5]:results[i, 6]] = results[i, 3]
-            simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
+        if phi_variables:
+            spin_mean = np.zeros((np.power(2, n), len(ts)))
 
-        critical_temperature = to_find_critical_temperature(S, ts)
+            for i in range(results.shape[0]):
+                E[results[i, 5]:results[i, 6]] = results[i, 0]
+                M[results[i, 5]:results[i, 6]] = results[i, 1]
+                S[results[i, 5]:results[i, 6]] = results[i, 2]
+                H[results[i, 5]:results[i, 6]] = results[i, 3]
+                simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
+
+                spin_mean[:, results[i, 5]:results[i, 6]] = np.transpose(results[i, 7])
+
+            critical_temperature = to_find_critical_temperature(S, ts)
+            return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H), np.copy(spin_mean)
+        else:
+            for i in range(results.shape[0]):
+                E[results[i, 5]:results[i, 6]] = results[i, 0]
+                M[results[i, 5]:results[i, 6]] = results[i, 1]
+                S[results[i, 5]:results[i, 6]] = results[i, 2]
+                H[results[i, 5]:results[i, 6]] = results[i, 3]
+                simulated_fc[:, :, results[i, 5]:results[i, 6]] = results[i, 4]
+
+            critical_temperature = to_find_critical_temperature(S, ts)
 
         
-        return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H)
+            return np.copy(simulated_fc), np.copy(critical_temperature), np.copy(E), np.copy(M), np.copy(S), np.copy(H)

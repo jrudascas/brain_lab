@@ -46,6 +46,16 @@ def save_ts(ts, path_output, filepath, sub_num):
         if not file_exists(filename):
             np.savetxt(filename, ts, delimiter=default_delimiter, fmt=format)
 
+def save_Jij(Jij, save_path, sub_num):
+    import numpy as np
+    if makedir2(save_path):
+        default_delimiter = ','
+        format = '%1.5f'
+
+        filename = save_path + '/' + 'Jij' + '_Sub' + str(sub_num) + '.csv'
+        if not file_exists(filename):
+            np.savetxt(filename, Jij, delimiter=default_delimiter, fmt=format)
+
 def save_tpm(tpm,path_output,num):
     import numpy as np
     from nilearn import plotting
@@ -125,6 +135,49 @@ def tpm_SbyN(time_series):
 
 
     return np.copy(tpm), np.copy(state_total), np.copy(frequency)
+
+def tpm_SbyN_2(time_series):
+    import numpy as np
+    avgs = np.mean(time_series, axis=0)
+
+    time_series_other = np.copy(time_series)
+    for i in range(len(avgs)):
+        time_series[np.where(time_series_other[:, i] >= avgs[i]),i] = 0
+        time_series[np.where(time_series_other[:, i] < avgs[i]),i] = 1
+
+    time_series = time_series.astype(np.int)
+
+    markov_chain = time_series.tolist()
+    n = len(markov_chain[0])
+    tpm = np.zeros((2 ** n, n))
+
+    norm = np.zeros((1,2**n))
+
+    for (s1, s2) in zip(markov_chain, markov_chain[1:]):
+        i = int(''.join(map(str, s1)), 2)
+        norm[i]+=1
+        for k in range(len(s1)):
+            if s1[k] != s2[k]:
+                tpm[i][k] += 1
+
+    state_total = np.sum(tpm, axis=-1)
+
+
+    frequency = np.zeros((2 ** time_series.shape[-1]))
+
+    for s in markov_chain:
+        i = int(''.join(map(str, s)), 2)
+        frequency[i] += 1
+
+    frequency /= len(markov_chain)
+
+    for ind,normal in enumerate(norm):
+        tpm[ind,...] = tpm[ind,...]/normal
+
+
+
+    return np.copy(tpm), np.copy(state_total), np.copy(frequency)
+
 
 def main_tpm_branch(time_series):
     import numpy as np
@@ -268,6 +321,18 @@ def empirical_tpm_concat(time_series,path_output):
 
     return tpm_list
 
+def avg_Jij(Jij):
+    import numpy as np
+    from projects.generalize_ising_model.tools.utils import to_normalize
+
+    assert len(Jij.shape) == 3
+
+    avg_Jij = np.mean(Jij,axis=-1)
+
+    J = to_normalize(avg_Jij)
+
+    return J
+
 def make_ts_array(path,number_regions = 5):
     import os
     import numpy as np
@@ -278,6 +343,18 @@ def make_ts_array(path,number_regions = 5):
             ts = load_matrix(filepath)
             timeSeries = ts[:, 0:number_regions].astype(np.float32)
             tup = tup + (timeSeries,)
+
+    return np.dstack(tup)
+
+def make_Jij_array(path,number_regions = 5):
+    import os
+    import numpy as np
+    tup = ()
+    for file in os.listdir(path):
+        if file.endswith('.csv'):
+            filepath = path + '/' + file
+            Jij = load_matrix(filepath)
+            tup = tup + (Jij,)
 
     return np.dstack(tup)
 
@@ -376,3 +453,19 @@ def save_hubs(hub_list,path):
     if makedir2(path):
         if not file_exists(filename1+'.npy'):
             np.save(filename1,np.asarray([hub_list]))
+
+def to_find_critical_temperature(data, temp, fit_type='rel_extrema'):
+    import numpy as np
+    from scipy.signal import argrelextrema
+
+    y_test = data.copy()
+
+    if fit_type == 'rel_extrema':
+        local_max = argrelextrema(data, np.greater, order=1)
+
+        y_test[local_max] = (y_test[np.array(local_max) + 1] + y_test[np.array(local_max) - 1]) / 2
+        return temp[np.where(y_test == np.max(y_test[local_max]))]
+
+    elif fit_type == 'max':
+        local_max = np.where(data == max(data))
+        return data[np.where(y_test == np.max(y_test[local_max]))]

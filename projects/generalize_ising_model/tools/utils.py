@@ -10,12 +10,33 @@ import os
 def makedir(path):
     if not os.path.exists(path):
         os.mkdir(path)
-
+def file_exists(filename):
+    import os
+    exists = os.path.isfile(filename)
+    if exists:
+        return True
+    else:
+        return False
 
 def save_graph(path_output, graph):
     format = '%1.4f'
     matrix = nx.to_numpy_array(graph)
     np.savetxt(path_output, matrix, delimiter=',', fmt=format)
+
+def save_file(data,path,name):
+
+    default_delimiter = ','
+    format = '%1.5f'
+
+    if len(data.shape) <= 2:
+        file = path + str(name) + '.csv'
+
+        if not file_exists(file):
+            np.savetxt(file, np.asarray(data), delimiter=default_delimiter, fmt=format)
+    else:
+        file = path + str(name) + '.npy'
+        if not file_exists(file):
+            np.save(file,np.asarray([data]))
 
 
 def to_save_results(temperature_parameters, J, E, M, H, S, simulated_fc, critical_temperature, path_output):

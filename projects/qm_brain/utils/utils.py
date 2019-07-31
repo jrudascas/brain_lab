@@ -116,7 +116,6 @@ def animate_anigreat(max_ind,xIn,yIn,sub_num,cond,numtime=300):
     bashCommand = "convert -delay 10 *.png "+ str(sub_num)+"_"+str(cond)+"_fig.gif"
     os.system(bashCommand)
 
-
 def animation_station(xAvg,yAvg,xIn,yIn,xerr,yerr):
     for i in range(300):
         fig = plt.figure(figsize=(480/96, 480 / 96), dpi=96)
@@ -211,7 +210,6 @@ def save_file(data,path,name):
         if not file_exists(file):
             np.save(file,np.asarray([data]))
 
-
 def save_tpm(tpm,path_output,num):
     import numpy as np
     from nilearn import plotting
@@ -238,7 +236,6 @@ def save_tpm(tpm,path_output,num):
 def zip_x_y(x,y):
     assert len(x) == len(y)
     return np.stack((x,y))
-
 
 def data_1d_to_2d(data,x,y):
 
@@ -308,8 +305,6 @@ def data_2d_to_1d(data,x,y):
 
     return new_dat
 
-
-
 def non_uniform_fft(pos_stack,pos_wavefun,solver,interp_size):
 
     assert len(pos_wavefun.shape) == 2
@@ -331,7 +326,6 @@ def non_uniform_fft(pos_stack,pos_wavefun,solver,interp_size):
     #mom_wavefun_2 = NufftObj.adjoint(y)
 
     return mom_wavefun_1 #, mom_wavefun_2
-
 
 def fft_time_warp(pos_stack, pos_wavefun,solver='cg',interp_size = 8):
     size = pos_wavefun.shape
