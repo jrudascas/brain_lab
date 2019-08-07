@@ -1,11 +1,11 @@
 from projects.qm_brain.utils.utils import *
 import numpy as np
 
-tpm_dims  = [4,8]
+tpm_dims  = [8]#[4,8]
 
-experiment_type = ['RunData/']
+#experiment_type = ['RestData/']
 
-#experiment_type = ['New Data/','BYD/','RunData/']
+experiment_type = ['New Data/','BYD/','RestData/']
 
 main_path = '/home/user/Desktop/QMBrain/'
 
@@ -37,9 +37,9 @@ for dim in tpm_dims:
             num_subjects = 15
         elif exp == 'BYD/':
             num_subjects = 14
-        elif exp == 'RunData/':
+        elif exp == 'RestData/':
             num_subjects=13
-            condition_list = ['Try1/','Try2/']
+            condition_list = ['/']
         else:
             num_subjects = []
 
@@ -133,10 +133,10 @@ for dim in tpm_dims:
                 if makedir2(subject_path):
                     default_delimiter = ','
                     format = '%1.5f'
-                    filenameTPM = subject_path + '/' + str(dim) + 'by' + str(dim) + 'tpm_' + str(i+1) + '.csv'
-                    filenameTPM_fig = subject_path + '/' + str(dim) + 'by' + str(dim) + 'tpm_' + str(i+1) + '.png'
-                    filenameHist = subject_path + '/' + str(dim) + 'by' + str(dim) + 'hist_' + str(i + 1) + '.csv'
-                    filenameHist_fig = subject_path + '/' + str(dim) + 'by' + str(dim) + 'hist_' + str(i + 1) + '.png'
+                    filenameTPM = subject_path + '/results/' + str(dim) + 'by' + str(dim) + 'tpm_' + str(i+1) + '.csv'
+                    filenameTPM_fig = subject_path + '/results/' + str(dim) + 'by' + str(dim) + 'tpm_' + str(i+1) + '.png'
+                    filenameHist = subject_path + '/results/' + str(dim) + 'by' + str(dim) + 'hist_' + str(i + 1) + '.csv'
+                    filenameHist_fig = subject_path + '/results/' + str(dim) + 'by' + str(dim) + 'hist_' + str(i + 1) + '.png'
 
                     if not file_exists(filenameTPM):
                         np.savetxt(filenameTPM, tpm, delimiter=default_delimiter, fmt=format)

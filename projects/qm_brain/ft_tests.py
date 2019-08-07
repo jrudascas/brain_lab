@@ -1,8 +1,22 @@
 from projects.qm_brain.utils.utils import *
 import numpy as np
-import matplotlib.pyplot as plt
-import time
-main_path = '/home/user/Desktop/QMBrain/New Data/'
+
+def get_probability(wavefun):
+
+    amplitude = np.abs(wavefun).T
+
+    ampMag = np.sqrt(np.sum((amplitude * amplitude).T, axis=0))
+
+    normAmp = (np.asarray(amplitude.T) / np.asarray(ampMag)).T
+
+    return normAmp * normAmp
+
+def get_n_largest(array,n=92):
+    ind = np.argpartition(np.abs(array), -n)[-n:]
+    return array[ind]
+
+
+main_path = '/home/user/Desktop/QMBrain/RestData/'
 
 filepathX = main_path + 'x_chanloc.csv'
 filepathY = main_path + 'y_chanloc.csv'
@@ -12,13 +26,13 @@ y = load_matrix(filepathY)
 
 coord_stack = zip_x_y(x,y)
 
-condition_list = ['Cond10/','Cond12/']
+condition_list = ['/']#'Cond10/','Cond12/']
+
+
 
 for condition in condition_list:
 
-    for i in range(15):
-
-
+    for i in range(13):
 
         subject_path = main_path + condition + str(i + 1) + '/'
 
@@ -26,70 +40,47 @@ for condition in condition_list:
 
         print('Running for subject ', i + 1, 'in folder ', condition)
 
-        filepathData = subject_path + 'data.csv'
+        if not file_exists(save_path+'momentum_prob.csv'):
 
-        data = load_matrix(filepathData)
+            filepathData = subject_path + 'data.csv'
 
-        probability,wavefun = process_eeg_data2(data)
+            data = load_matrix(filepathData)
 
-        del data
+            probability,wavefun = process_eeg_data2(data)
 
-        # Here I need to discuss with Andrea about how to implement this new method
-        # Do I normalize the data and then transform to 2d? How do I proceed?
+            data = None
+            probability = None
+            del data,probability
 
-        # Assuming I just convert normAmp and phase to 3d
+            # Here I need to discuss with Andrea about how to implement this new method
+            # Do I normalize the data and then transform to 2d? How do I proceed?
 
-        psi = data_1d_to_2d(wavefun,x,y)
+            # Assuming I just convert normAmp and phase to 3d
 
-        xAvg = probability @ x
-        yAvg = probability @ y
+            psi = data_1d_to_2d(wavefun,x,y)
 
-        xSqrAvg = probability @ (x * x)
-        ySqrAvg = probability @ (y * y)
+            wavefun=None
+            del wavefun
 
-        dx = np.sqrt(xSqrAvg - (xAvg * xAvg))
-        dy = np.sqrt(ySqrAvg - (yAvg * yAvg))
+            # probability_conservation_plot(len(x),probability)
 
-        # probability_conservation_plot(len(x),probability)
+            momentum_wavefunction = fft_time_warp(coord_stack,psi)
 
-        start = time.time()
+            makedir2(save_path)
 
-        momentum_wavefunction = fft_time_warp(coord_stack,psi)
+            #save_file(psi,save_path,'position_wavefunction')
+            psi_p = momentum_wavefunction
+            del psi,momentum_wavefunction
+            #save_file(momentum_wavefunction,save_path,'momentum_wavefunction')
 
-        print('It took ',time.time()-start, 'seconds to compute the fft')
+            psi_p_small = np.zeros(shape=(psi_p.shape[0], psi_p.shape[1]), dtype=np.complex64)
 
-        momentum_wavefunction = data_2d_to_1d(momentum_wavefunction,x,y)
+            for t in range(psi_p.shape[0]):
+                psi_p_small[t, :] = get_n_largest(psi_p[t, ...].flatten())
 
-        momenta_phase, momenta_norm_amp, momentum_prob = momenta_prob(momentum_wavefunction)
+            momentum_prob = get_probability(psi_p_small.T)
 
-        prob_deriv = prob_derivative(probability)
+            save_file(momentum_prob,save_path,'momentum_prob')
 
-        # Mass is an arbitray (as of yet) fitting parameter so set it equal to one
-        m = 1
-
-        # Calculate the average momentum
-        pxAvg = np.sum(prob_deriv[...] * x[:], axis=1)
-        pyAvg = np.sum(prob_deriv[...] * y[:], axis=1)
-
-        # Calculate the average squared momentum
-        pxAvgSqr = np.sum(np.square(prob_deriv[:, :]) * ((1 / momentum_prob[:, :])) * np.square(x[:]), axis=1)
-        pyAvgSqr = np.sum(np.square(prob_deriv[:, :]) * ((1 / momentum_prob[:, :])) * np.square(y[:]), axis=1)
-
-        # Get the delta p
-        dpx = m * np.sqrt(pxAvgSqr - (pxAvg * pxAvg))
-        dpy = m * np.sqrt(pyAvgSqr - (pyAvg * pyAvg))
-
-        # Find all of the uncertainty relations
-        uncertainty_x = dpx * dx
-        uncertainty_y = dpy * dy
-
-        makedir2(save_path)
-
-        save_file(dx, save_path, 'DeltaX')
-        save_file(dy, save_path, 'DeltaY')
-        save_file(dpx, save_path, 'DeltaPX')
-        save_file(dpy, save_path, 'DeltaPY')
-        save_file(uncertainty_x, save_path, 'DeltaXDeltaPX')
-        save_file(uncertainty_y, save_path, 'DeltaYDeltaPY')
-
-
+        else:
+            print('Already Done!')

@@ -197,6 +197,10 @@ def prob_derivative(probability,ind=1):
 
 def save_file(data,path,name):
 
+    if hasattr(data, '__len__') and (not isinstance(data, str)):
+        data = np.asarray(data)
+
+
     default_delimiter = ','
     format = '%1.5f'
 
@@ -204,11 +208,11 @@ def save_file(data,path,name):
         file = path + str(name) + '.csv'
 
         if not file_exists(file):
-            np.savetxt(file, np.asarray(data), delimiter=default_delimiter, fmt=format)
+            np.savetxt(file, data, delimiter=default_delimiter, fmt=format)
     else:
         file = path + str(name) + '.npy'
         if not file_exists(file):
-            np.save(file,np.asarray([data]))
+            np.save(file,[data])
 
 def save_tpm(tpm,path_output,num):
     import numpy as np
@@ -288,7 +292,7 @@ def data_2d_to_1d(data,x,y):
     assert size[2] == size[1]
     assert size[0] > size[1]
 
-    new_dat = np.zeros(shape=(size[0],size[1]))
+    new_dat = np.zeros(shape=(size[0],size[1]),dtype=np.complex64)
 
     y_count = 0
 
@@ -301,7 +305,7 @@ def data_2d_to_1d(data,x,y):
 
             y_count += 1
 
-        new_dat[:,count] = data[:,y_loc,x_ind]
+        new_dat[:,count] = np.squeeze(data[:,y_loc,x_ind])
 
     return new_dat
 

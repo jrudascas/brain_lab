@@ -1,7 +1,7 @@
 from projects.qm_brain.utils.utils import *
 import numpy as np
 
-num_subjects = 15
+num_subjects = 5
 main_path = '/home/user/Desktop/QMBrain/BYD/'
 
 filepathX = main_path + 'x_chanloc.csv'
