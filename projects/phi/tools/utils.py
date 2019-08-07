@@ -171,7 +171,7 @@ def tpm_SbyN_2(time_series):
 
     frequency /= len(markov_chain)
 
-    for ind,normal in enumerate(norm):
+    for ind,normal in enumerate(np.squeeze(norm)):
         tpm[ind,...] = tpm[ind,...]/normal
 
 

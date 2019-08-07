@@ -55,6 +55,8 @@ for parcel in parcels:
         tpm_tc, state_total, frequency = tpm_SbyN_2(tc[..., temp])
 
         tpm_tc_T.append(tpm_tc)
+
+    print('x')
     '''
         for div in range(len(state_total)):
             if state_total[div] != 0.0:
