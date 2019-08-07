@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import networkx as nx
+import random
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 from scipy.optimize import curve_fit
 import os
@@ -18,10 +19,29 @@ def file_exists(filename):
     else:
         return False
 
+def to_generate_random_graph(size, isolate=False, weighted=True):
+    while True:
+        G = nx.complete_graph(size, create_using=nx.Graph())
+
+        G.remove_edges_from(nx.selfloop_edges(G))
+
+        if not isolate:
+            if len(list(nx.isolates(G))) == 0:
+                break
+
+
+    if weighted:
+        for (u, v) in G.edges():
+            G.edges[u, v]['weight'] = random.random()
+
+    return G
+
 def save_graph(path_output, graph):
     format = '%1.4f'
     matrix = nx.to_numpy_array(graph)
     np.savetxt(path_output, matrix, delimiter=',', fmt=format)
+
+    return matrix
 
 def save_file(data,path,name):
 
