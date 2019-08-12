@@ -7,7 +7,7 @@ from .tools.utils import to_find_critical_temperature
 import warnings
 
 warnings.filterwarnings("ignore")
-n_cpu = multiprocessing.cpu_count() - 1
+n_cpu = multiprocessing.cpu_count() - 3
 
 
 # @numba.jit(nopython=True)
@@ -153,9 +153,9 @@ def generalized_ising(Jij, temperature_parameters=(0.1, 5, 100), n_time_points=1
     n = Jij.shape[-1]
 
     if temperature_distribution == 'lineal':
-        ts = np.linspace(temperature_parameters[0], temperature_parameters[1], temperature_parameters[2])
+        ts = np.linspace(temperature_parameters[0], temperature_parameters[1], num=temperature_parameters[2])
     elif temperature_distribution == 'log':
-        ts = np.logspace(temperature_parameters[0],np.log10(temperature_parameters[1]),temperature_parameters[2])
+        ts = np.logspace(temperature_parameters[0],np.log10(temperature_parameters[1]),num=temperature_parameters[2])
 
     pool = multiprocessing.Pool(n_cpu)
 

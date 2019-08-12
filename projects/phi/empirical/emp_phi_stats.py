@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 import scipy.stats as ss
 from projects.phi.tools.utils import *
 
-mainPath = '/home/user/Desktop/data_phi/phi/Vis/'
+mainPath = '/home/user/Desktop/data_phi/phi/Cingulo/SbyS/'
 
 phiList,phiSumList =[],[]
 
-for i in range(17):
+for i in range(5):
     filePathPhi = mainPath + 'phi_' + str(i) + '.csv'
     filePathSum =  mainPath + 'phiSum_' + str(i) + '.csv'
 
