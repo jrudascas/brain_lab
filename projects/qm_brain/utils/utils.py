@@ -195,6 +195,18 @@ def prob_derivative(probability,ind=1):
             p.append(p_i / ind)
     return np.asarray(p)
 
+def derivative(x,ind=1):
+
+    p = []
+    for i in range(x.shape[0]):
+        if i == (x.shape[0]-1):
+            p_i = x[i]
+            p.append(p_i/ind)
+        else:
+            p_i = x[i + ind] - x[i]
+            p.append(p_i / ind)
+    return np.asarray(p)
+
 def save_file(data,path,name):
 
     if hasattr(data, '__len__') and (not isinstance(data, str)):

@@ -15,7 +15,10 @@ coord_stack = zip_x_y(x,y)
 
 condition_list = ['/']#'Cond10/','Cond12/']
 
+
 for condition in condition_list:
+
+    dx_list, dp_list = [],[]
 
     for i in range(13):
 
@@ -23,8 +26,16 @@ for condition in condition_list:
 
         print('Running for subject ', i + 1, 'in folder ', condition)
 
-        if not file_exists(subject_path+'DeltaXDeltaPY.csv'):
 
-            filepathPos = subject_path + 'position_wavefunction_1d.npy'
-            filepathMom = subject_path + 'momentum_wavefunction.npy'
+        filepathPos = subject_path + 'DeltaX.csv'
+        filepathMom = subject_path + 'DeltaPX.csv'
+
+        dx_list.append(load_matrix(filepathPos))
+        dp_list.append(load_matrix(filepathMom))
+
+    plt.figure()
+    plt.plot(dx_list)
+    #plt.plot(dp_list,color='k')
+    plt.xlim([0,200])
+    plt.show()
 

@@ -59,7 +59,7 @@ def save_file(data,path,name):
             np.save(file,np.asarray([data]))
 
 
-def to_save_results(temperature_parameters, J, E, M, H, S, simulated_fc, critical_temperature, path_output):
+def to_save_results(temperature_parameters, J, E, M, H, S, simulated_fc, critical_temperature, path_output,temperature_distribution = 'linear'):
     default_delimiter = ','
     format = '%1.5f'
 
@@ -71,7 +71,11 @@ def to_save_results(temperature_parameters, J, E, M, H, S, simulated_fc, critica
     np.savetxt(path_output + 'ctem.csv', critical_temperature, delimiter=default_delimiter, fmt=format)
     np.save(path_output + 'sim_fc', simulated_fc)
 
-    ts = np.linspace(temperature_parameters[0], temperature_parameters[1], num=temperature_parameters[2])
+    if temperature_distribution == 'linear':
+        ts = np.linspace(temperature_parameters[0], temperature_parameters[1], num=temperature_parameters[2])
+    elif temperature_distribution == 'log':
+        ts = np.logspace(temperature_parameters[0], np.log10(temperature_parameters[1]), num=temperature_parameters[2])
+
     f = plt.figure(figsize=(18, 10))  # plot the calculated values
 
     f.add_subplot(2, 2, 1)
@@ -189,15 +193,22 @@ def to_find_critical_temperature(data, temp):
     return temp[np.where(y_test == np.max(y_test[local_max]))]
 
 
-def to_normalize(J):
+def to_normalize(J,netx = False):
+    if netx:
+        J = nx.to_numpy_array(J)
     max_J = np.max(J)
     min_J = np.min(J)
 
     if max_J >= 0 and max_J <= 1 and min_J >= 0 and min_J <= 1:
-        return J
+        if netx:
+            return nx.to_networkx_graph(J)
+        else:
+            return J
     else:
-        return J / max_J
-
+        if netx:
+            return nx.to_networkx_graph(J / max_J)
+        else:
+            return J / max_J
 
 def find_nearest(array, value):
     idx = np.abs(array - value).argmin()

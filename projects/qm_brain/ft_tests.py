@@ -40,9 +40,9 @@ for condition in condition_list:
 
         print('Running for subject ', i + 1, 'in folder ', condition)
 
-        if not file_exists(save_path+'momentum_prob.csv'):
+        if not file_exists(save_path+'momentum_prob_short.csv'):
 
-            filepathData = subject_path + 'data.csv'
+            filepathData = subject_path + 'data_short.csv'
 
             data = load_matrix(filepathData)
 
@@ -80,7 +80,7 @@ for condition in condition_list:
 
             momentum_prob = get_probability(psi_p_small.T)
 
-            save_file(momentum_prob,save_path,'momentum_prob')
+            save_file(momentum_prob,save_path,'momentum_prob_short')
 
         else:
             print('Already Done!')

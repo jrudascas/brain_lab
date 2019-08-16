@@ -18,17 +18,20 @@ ax.spines['right'].set_color('none')
 ax.spines['top'].set_color('none')
 plt.xticks([])
 plt.yticks([])
-ax.set_ylim([-15, 15])
+ax.set_ylim([-7, 7])
 
 
-plt.annotate(
-    'Above the Mean\nEquals 1',
-    xy=(103, 2), arrowprops=dict(arrowstyle='->'), xytext=(15, 11))
+#plt.annotate(
+ #   'Above the Mean\nEquals 1',
+  #  xy=(103, 2), arrowprops=dict(arrowstyle='->'), xytext=(15, 11))
 
-plt.annotate('Below the Mean\nEquals 0',xy=(162, -1.3), arrowprops=dict(arrowstyle='->'), xytext=(133, -10))
+#plt.annotate('Below the Mean\nEquals 0',xy=(162, -1.3), arrowprops=dict(arrowstyle='->'), xytext=(133, -10))
+
+#plt.annotate('For Each of the\n92 Electrodes',xy=(15, 11))
+#plt.annotate('There is a Similar \n Time Course',xy=(133,-10))
 
 plt.plot(ts[:,0])
-plt.axhline(mean)
+#plt.axhline(mean)
 
 plt.xlabel('Time')
 
