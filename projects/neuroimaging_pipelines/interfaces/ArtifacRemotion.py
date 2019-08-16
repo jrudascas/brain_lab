@@ -21,9 +21,13 @@ class ArtifacRemotion(BaseInterface):
         affine = img.affine
         data = img.get_data()
 
+        artifact_volumens = np.loadtxt(self.inputs.outlier_files, dtype=int)
+        if len(artifact_volumens) != 0:
+            data_artifact_removed = np.delete(data, artifact_volumens, axis=-1)
+        else:
+            data_artifact_removed = data
 
-        nib.save(nib.Nifti1Image(data, affine), self.inputs.out_file)
-        artifact_volumens = np.loadtxt(self.inputs.outlier_files)
+        nib.save(nib.Nifti1Image(data_artifact_removed, affine), self.inputs.out_file)
 
         return runtime
 
