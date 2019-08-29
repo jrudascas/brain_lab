@@ -8,7 +8,7 @@ class ExtractConfoundsInputSpec(BaseInterfaceInputSpec):
     delimiter = traits.String(mandatory=False)
     list_mask = traits.List(mandatory=True)
     file_concat = File(mandatory=False)
-
+    outlier_files = File(mandatory=False)
 
 class ExtractConfoundsOutputSpec(TraitedSpec):
     out_file = File(genfile=True)
@@ -43,8 +43,18 @@ class ExtractConfounds(BaseInterface):
 
         ev = np.transpose(np.array(confounds))
 
+
         if self.inputs.file_concat is not None:
+
+            artifact_volumens = np.loadtxt(self.inputs.outlier_files, dtype=int)
             extra_confounds = np.loadtxt(self.inputs.file_concat, delimiter=delimiter)
+
+            if extra_confounds.shape[0] != ev.shape[0]:
+                if len(artifact_volumens) != 0:
+                    extra_confounds = np.delete(extra_confounds, artifact_volumens, axis=0)
+                else:
+                    raise Exception("Errorrrr")
+
             results = np.concatenate((ev, extra_confounds), axis=1)
         else:
             results = ev
