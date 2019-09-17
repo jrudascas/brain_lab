@@ -26,7 +26,7 @@ for condition in condition_list:
 
         print('Running for subject ', i + 1, 'in folder ', condition)
 
-        filepathData = subject_path + 'data.csv'
+        filepathData = subject_path + 'data_short.csv'
 
         data = load_matrix(filepathData)
 
@@ -34,6 +34,6 @@ for condition in condition_list:
 
         makedir2(save_path)
 
-        file = save_path + 'position_wavefunction_1d.npy'
+        file = save_path + 'position_wavefunction_1d_short.npy'
         if not file_exists(file):
             np.save(file,np.asarray([wavefun]))

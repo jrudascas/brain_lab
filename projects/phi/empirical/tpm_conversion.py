@@ -18,6 +18,9 @@ for network in networks:
 
             tpm_SbyS = pyphi.convert.state_by_node2state_by_state(tpm[i,...])
 
+            eps = tpm[i,...] - tpm_SbyS
+
+
             tpm_save_path = main_path + state + '/' + network
 
             save_tpm(tpm_SbyS,tpm_save_path,i+1)
