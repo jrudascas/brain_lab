@@ -49,15 +49,20 @@ class PipelineDWI(Pipeline):
         subject_list = self.subject_list
         iso_size = self.parameters['iso_size']
 
+        t1_relative_path = self.paths['t1_relative_path']
+        dwi_relative_path = self.paths['dwi_relative_path']
+        bvec_relative_path = self.paths['bvec_relative_path']
+        bval_relative_path = self.paths['bval_relative_path']
+
         # Infosource - a function free node to iterate over the list of subject names
         infosource = Node(IdentityInterface(fields=['subject_id']), name="infosource")
         infosource.iterables = [('subject_id', subject_list)]
 
         # SelectFiles - to grab the data (alternativ to DataGrabber)
-        anat_file = opj('{subject_id}/data/T1w/', 'T1w_acpc_dc_restore_1.25.nii.gz')
-        dwi_file = opj('{subject_id}/data/T1w/Diffusion/', 'data.nii.gz')
-        bvec_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvecs')
-        bval_file = opj('{subject_id}/data/T1w/Diffusion/', 'bvals')
+        anat_file = opj('{subject_id}', t1_relative_path)
+        dwi_file = opj('{subject_id}', dwi_relative_path)
+        bvec_file = opj('{subject_id}', bvec_relative_path)
+        bval_file = opj('{subject_id}', bval_relative_path)
 
         templates = {'anat': anat_file,
                      'dwi': dwi_file,
@@ -202,7 +207,7 @@ class PipelinefMRI(Pipeline):
     def run(self):
         matlab_cmd = self.paths['spm_path'] + ' ' + self.paths['mcr_path'] + '/ script'
         spm.SPMCommand.set_mlab_paths(matlab_cmd=matlab_cmd, use_mcr=True)
-
+        print(matlab_cmd)
         print('SPM version: ' + str(spm.SPMCommand().version))
 
         experiment_dir = opj(self.paths['input_path'], 'output/')
@@ -218,6 +223,8 @@ class PipelinefMRI(Pipeline):
         iso_size = self.parameters['iso_size']  # Isometric resample of functional images to voxel size (in mm)
         low_pass = self.parameters['low_pass']
         high_pass = self.parameters['high_pass']
+        t1_relative_path = self.paths['t1_relative_path']
+        fmri_relative_path = self.paths['fmri_relative_path']
 
         # ExtractROI - skip dummy scans
         extract = Node(ExtractROI(t_min=init_volume, t_size=-1, output_type='NIFTI'), name="extract") #FSL
@@ -319,8 +326,8 @@ class PipelinefMRI(Pipeline):
         infosource.iterables = [('subject_id', subject_list)]
 
         # SelectFiles - to grab the data (alternativ to DataGrabber)
-        anat_file = opj('{subject_id}', 'data/unprocessed/3T/T1w_acpc_dc_restore_1.25.nii')
-        func_file = opj('{subject_id}', 'data/unprocessed/3T/rfMRI_REST1_LR/3T_rfMRI_REST1_LR.nii.gz')
+        anat_file = opj('{subject_id}', t1_relative_path)
+        func_file = opj('{subject_id}', fmri_relative_path)
 
         #anat_file = opj('{subject_id}/anat/', 'data.nii')
         #func_file = opj('{subject_id}/func/', 'data.nii')
@@ -394,43 +401,17 @@ class PipelinefMRI(Pipeline):
                          (art, art_remotion, [('outlier_files', 'outlier_files')]),
                          (coregwf, art_remotion, [('registration_fmri.out_file', 'in_file')]),
                          (coregwf, gunzip, [('n4bias.out_file', 'in_file')]),
-
-
-
-
                          (selectfiles, normalize_fmri, [('anat', 'image_to_align')]),
                          (art_remotion, normalize_fmri, [('out_file', 'apply_to_files')]),
-
-
-
-
-
-
-
-
                          (selectfiles, normalize_t1, [('anat', 'image_to_align')]),
                          (gunzip, normalize_t1, [('out_file', 'apply_to_files')]),
-
                          (selectfiles, normalize_masks, [('anat', 'image_to_align')]),
-
-
-
-
-
-
                          (coregwf, normalize_masks, [(('segmentation.partial_volume_files', get_wm_csf), 'apply_to_files')]),
-
-
-
-
-
-
-
-
                          (normalize_fmri, smooth, [('normalized_files', 'in_files')]),
                          (smooth, extract_confounds_ws_csf, [('smoothed_files', 'in_file')]),
                          (normalize_masks, extract_confounds_ws_csf, [('normalized_files', 'list_mask')]),
                          (mcflirt, extract_confounds_ws_csf, [('par_file', 'file_concat')]),
+                         (art, extract_confounds_ws_csf, [('outlier_files', 'outlier_files')]),
 
                          # (smooth, extract_confounds_gs, [('smoothed_files', 'in_file')]),
                          # (normalize_t1, extract_confounds_gs, [(('normalized_files',change_to_list), 'list_mask')]),
