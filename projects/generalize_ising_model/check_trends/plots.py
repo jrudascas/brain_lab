@@ -10,12 +10,11 @@ main_path = '/home/user/Desktop/Popiel/check_ising/'
 
 sizes = [5,10,25,100,250]
 
-temp_params = [(-3,4,50),(-1,8,50),(0,12,50), (1,100,50),(1.3,200,50)]
+temp_params = [(-3,4,50),(-1,8,50),(0,20,50), (1,100,50),(1.3,200,50)]
 
-colourWheel =['#329932',
-            '#ff6961',
-            'b',
-            '#6a3d9a',
+colourWheel =[
+            'k',
+            'r',
             '#fb9a99',
             '#e31a1c',
             '#fdbf6f',
@@ -44,8 +43,8 @@ dashesStyles = [[3,1],
 dict = {}
 
 for ind,size in enumerate(sizes):
-    dict['susc'] = load_matrix(main_path+str(size)+'/susc.csv')
-    dict['heat'] = load_matrix(main_path + str(size) + '/heat.csv')
+    dict['Susceptibility'] = load_matrix(main_path+str(size)+'/susc.csv')
+    dict['Specific Heat'] = load_matrix(main_path + str(size) + '/heat.csv')
 
     x = np.logspace(temp_params[ind][0],np.log10(temp_params[ind][1]),num=temp_params[ind][2])
 
@@ -60,14 +59,12 @@ for ind,size in enumerate(sizes):
         else:
             alphaVal = 0.6
             linethick = 3.5
-        ax.plot(x,
+        ax.scatter(x,
                 df[series],
                 color=colourWheel[j % len(colourWheel)],
-                linestyle='-',
-                dashes=dashesStyles[j % len(dashesStyles)],
-                lw=linethick,
                 label=series,
-                alpha=alphaVal)
+                alpha=alphaVal,
+                marker='o')
     ax.set_xlabel('')
     #ax.set_xscale('log')
     ax.yaxis.set_major_formatter(ScalarFormatter())
@@ -78,7 +75,7 @@ for ind,size in enumerate(sizes):
     ax.yaxis.tick_right()
     #nameOfPlot = 'Criticality and the Ising model (' + str(size) + 'by' + str(size) + 'random matrix)'
     #plt.ylabel(nameOfPlot, rotation=0)
-    ax.legend(frameon=False, loc='upper left', ncol=2, handlelength=4)
+    ax.legend(frameon=True, loc='upper right', ncol=1, handlelength=4)
     plt.savefig(main_path+str(size)+'plot.pdf', dpi=300)
     plt.show()
 
