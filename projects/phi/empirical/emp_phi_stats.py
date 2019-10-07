@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as ss
 from projects.phi.tools.utils import *
 
-mainPath = '/home/user/Desktop/data_phi/phi/Aud/SbyS/'
+mainPath = '/home/user/Desktop/data_phi/phi/Retro/SbyS/'
 
 phiList,phiSumList =[],[]
 
@@ -33,9 +33,10 @@ states = ['Awake','Mild','Deep','Recovery']
 state_pos = np.arange(len(states))
 
 plt.violinplot(phi_array, state_pos, showmeans=True, showextrema=True, showmedians=False)
-plt.title('Relation of Phi and Propofol Induced Unconsciousness')
+plt.title('$\Phi$ vs Conscious State in the Retrosplenial Network')
 plt.xlabel('Brain State')
 plt.ylabel('Phi')
+plt.ylim([0.2,0.7])
 plt.xticks(state_pos,states)
 plt.show()
 
