@@ -17,6 +17,19 @@ def load_matrix(filepath):
     elif str(extension) == 'npz':
         return np.load(filepath)
 
+def norm_on_int_pi(data):
+    max_val = np.max(data)
+    min_val = np.min(data)
+
+    data2 = np.copy(data)
+
+    if np.abs(min_val)>np.abs(max_val):
+        N = min_val/np.pi
+    else:
+        N = max_val/np.pi
+
+    return data2/N
+
 def file_exists(filename):
     import os
     exists = os.path.isfile(filename)

@@ -95,6 +95,7 @@ smooth_sus,smooth_mag,smooth_energy,smooth_heat = [],[],[],[]
 
 smooth_phi, smooth_phi_sus = [],[]
 
+'''
 for i in range(tot_phi_sum.shape[0]):
     f0 = movingaverage(tot_phi_sum[i,:], 10)
     f1 = movingaverage(tot_phi_sus[i,:] * T2, 10)
@@ -108,6 +109,21 @@ for i in range(tot_phi_sum.shape[0]):
     smooth_mag.append(f3/np.amax(f3))
     smooth_energy.append(f4 / np.amax(f4))
     smooth_heat.append(f5 / np.amax(f5))
+'''
+
+for i in range(tot_phi_sum.shape[0]):
+    f0 = movingaverage(tot_phi_sum[i,:], 10)
+    f1 = movingaverage(tot_phi_sus[i,:] * T2, 10)
+    f2 = movingaverage(susc[i,:], 10)
+    f3 = movingaverage(mag[i,:], 10)
+    f4 = movingaverage(energy[i,:],10)
+    f5 = movingaverage(spec_heat[i,:],10)
+    smooth_phi.append(f0)
+    smooth_phi_sus.append(f1)
+    smooth_sus.append(f2)
+    smooth_mag.append(f3)
+    smooth_energy.append(f4)
+    smooth_heat.append(f5)
 
 smooth_tot_phi = np.array(smooth_phi)
 smooth_tot_phi_sus = np.array(smooth_phi_sus)
@@ -172,8 +188,6 @@ std_tot_phi_sus = np.delete(std_tot_phi_sus,[96,97,98,99])
 std_tot_phi_sus = np.delete(std_tot_phi_sus,[0,1,2,3,4])
 
 
-# Figure 1
-
 plt.close()
 fig, axs = plt.subplots(3,2)
 
@@ -237,147 +251,6 @@ ax5.annotate('F',xy=(0.1,0.97))
 
 fig.suptitle('Order and Susceptibility',fontsize=20)
 fig.set_size_inches(18.5, 10.5)
-plt.savefig(directory + 'plot.pdf', dpi=600)
+plt.savefig(directory + 'plot_notnorm.pdf', dpi=600)
 
 plt.show()
-
-# Figure 2
-
-plt.close()
-fig, axs = plt.subplots(3,2)
-
-ax0 = axs[0,0]
-ax1 = axs[1,0]
-ax2 = axs[2,0]
-ax3 = axs[0,1]
-ax4 = axs[1,1]
-ax5 = axs[2,1]
-
-x_tickss = [0.1,0.5,1,2,3,4]
-
-
-ax0.scatter(T,std_tot_mag**2,color='k',marker='o')
-
-ax0.semilogx()
-ax0.set_xticks(x_tickss)
-ax0.set_title(r'$\sigma^2_J(M)$')
-ax0.annotate('A',xy=(0.1,1))
-
-ax1.scatter(T,std_E**2,color='k',marker='o')
-ax1.semilogx()
-ax1.set_xticks(x_tickss)
-ax1.set_title(r'$\sigma^2_J(E)$')
-ax1.annotate('B',xy=(0.1,-0.27))
-
-ax2.scatter(T2,std_tot_phi**2,color='k',marker='o')
-#ax2.fill_between(T2, avg_tot_phi - std_tot_phi, avg_tot_phi + std_tot_phi,
- #                color='gray', alpha=0.2)
-ax2.semilogx()
-ax2.set_xticks(x_tickss)
-ax2.set_title(r'$\sigma^2_J(\Phi)$')
-ax2.annotate('C',xy=(0.1,1))
-
-ax3.scatter(T,std_tot_susc**2,color='k',marker='o')
-#ax3.fill_between(T, avg_tot_susc - std_tot_susc, avg_tot_susc + std_tot_susc,
- #                color='gray', alpha=0.2)
-ax3.semilogx()
-ax3.set_xticks(x_tickss)
-ax3.set_title(r'$\sigma^2_J(\chi)$')
-ax3.annotate('D',xy=(0.1,1))
-
-ax4.scatter(T,std_tot_heat**2,color='k',marker='o')
-#ax4.fill_between(T, avg_tot_heat - std_tot_heat, avg_tot_heat + std_tot_heat,
- #                color='gray', alpha=0.2)
-ax4.semilogx()
-ax4.set_xticks(x_tickss)
-ax4.set_title(r'$\sigma^2_J(C_v)$')
-ax4.annotate('E',xy=(0.1,1))
-
-ax5.scatter(T2,std_tot_phi_sus**2,color='k',marker='o')
-#ax5.fill_between(T2, avg_tot_phi_sus - std_tot_phi_sus, avg_tot_phi_sus + std_tot_phi_sus,
- #                color='gray', alpha=0.2)
-ax5.semilogx()
-ax5.set_xticks(x_tickss)
-ax5.set_title(r'$\sigma^2_J(\chi_{\Phi})$')
-ax5.annotate('F',xy=(0.1,0.97))
-
-fig.suptitle('Control on System Parameters',fontsize=20)
-fig.set_size_inches(18.5, 10.5)
-plt.savefig(directory + 'plot_fig2.pdf', dpi=600)
-
-plt.show()
-
-
-fig2, axs = plt.subplots(3,2)
-
-ax0 = axs[0,0]
-ax1 = axs[1,0]
-ax2 = axs[2,0]
-ax3 = axs[0,1]
-ax4 = axs[1,1]
-ax5 = axs[2,1]
-
-
-ax0.scatter(T,avg_Mag,color='k',marker='o')
-ax0.fill_between(T, avg_Mag - std_Mag, avg_Mag + std_Mag,
-                 color='gray', alpha=0.2)
-ax0.semilogx()
-ax0.set_xticks(x_tickss)
-ax0.text('A',xy=(0.09,1))
-
-ax1.scatter(T,avg_E,color='k',marker='o')
-ax1.fill_between(T, avg_E - std_E, avg_E + std_E,
-                 color='gray', alpha=0.2)
-ax1.semilogx()
-ax1.set_xticks(x_tickss)
-ax1.text('B',xy=(0.09,1))
-
-ax2.scatter(T2,avg_tot_phi,color='k',marker='o')
-ax2.fill_between(T2, avg_tot_phi - std_tot_phi, avg_tot_phi + std_tot_phi,
-                 color='gray', alpha=0.2)
-ax2.semilogx()
-ax2.set_xticks(x_tickss)
-ax2.text('C',xy=(0.09,1))
-
-ax3.scatter(T,avg_chi,color='k',marker='o')
-ax3.fill_between(T, avg_chi - std_chi, avg_chi + std_chi,
-                 color='gray', alpha=0.2)
-ax3.semilogx()
-ax3.set_xticks(x_tickss)
-ax3.text('D',xy=(0.09,1))
-
-ax4.scatter(T,avg_Cv,color='k',marker='o')
-ax4.fill_between(T, avg_Cv - std_Cv, avg_Cv + std_Cv,
-                 color='gray', alpha=0.2)
-ax4.semilogx()
-ax4.set_xticks(x_tickss)
-ax4.text('E',xy=(0.09,1))
-
-ax5.scatter(T2,avg_tot_phi_sus,color='k',marker='o')
-ax5.fill_between(T2, avg_tot_phi_sus - std_tot_phi_sus, avg_tot_phi_sus + std_tot_phi_sus,
-                 color='gray', alpha=0.2)
-ax5.semilogx()
-ax5.set_xticks(x_tickss)
-ax5.text('F',xy=(0.09,1))
-
-plt.show()
-
-
-
-
-'''
-
-ax.set_xlabel('')
-# ax.set_xscale('log')
-ax.yaxis.set_major_formatter(ScalarFormatter())
-ax.yaxis.major.formatter._useMathText = True
-ax.yaxis.set_minor_locator(AutoMinorLocator(5))
-ax.xaxis.set_minor_locator(AutoMinorLocator(5))
-ax.yaxis.set_label_coords(0.63, 1.01)
-ax.yaxis.tick_right()
-# nameOfPlot = 'Criticality and the Ising model (' + str(size) + 'by' + str(size) + 'random matrix)'
-# plt.ylabel(nameOfPlot, rotation=0)
-ax.legend(frameon=True, loc='upper right', ncol=1, handlelength=4)
-plt.savefig(main_path + str(size) + 'plot.pdf', dpi=300)
-plt.show()
-'''
