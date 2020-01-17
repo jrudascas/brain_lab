@@ -40,6 +40,7 @@ vis_w_baseline = pd.concat([baseline,vis])
 
 
 list_for_anova = [aud_w_baseline,cingulo_w_baseline,dmn_w_baseline,dorsal_w_baseline,fronto_w_baseline,retro_w_baseline,smhand_w_baseline,smmouth_w_baseline,ventral_w_baseline,vis_w_baseline]
+list_names = ['aud','baseline','cingulo','dmn','dorsal','fronto','retro','smhand','smmouth','ventral','vis']
 
 summary_aud = rp.summary_cont(aud_w_baseline.groupby('network'))
 summary_cingulo = rp.summary_cont(cingulo_w_baseline.groupby('network'))
@@ -64,7 +65,7 @@ summary_smhand2 = rp.summary_cont(smhand_w_baseline.groupby(['network','state'])
 summary_smmouth2 = rp.summary_cont(smmouth_w_baseline.groupby(['network','state']))
 summary_ventral2 = rp.summary_cont(ventral_w_baseline.groupby(['network','state']))
 summary_vis2 = rp.summary_cont(aud_w_baseline.groupby(['network','state']))
-
+'''
 for data in list_for_anova:
     model = ols('phi ~ network*state',data).fit()
     table = sm.stats.anova_lm(model, typ=3)
@@ -74,4 +75,20 @@ for data in list_for_anova:
 
 
 
-print(df)
+
+for idx,data in enumerate(list_for_anova):
+    aov = pg.mixed_anova(dv='phi', within='network', between='state', subject='subject', data=data)
+    # Pretty printing of ANOVA summary
+    print(list_names[idx])
+    pg.print_table(aov)
+
+'''
+
+
+
+for idx,data in enumerate(list_for_anova):
+    aov = pg.anova(dv='phi', between=['network','state'], data=data)
+    # Pretty printing of ANOVA summary
+    print(list_names[idx])
+    pg.print_table(aov)
+
