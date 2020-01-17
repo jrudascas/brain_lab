@@ -16,27 +16,36 @@ rsn_path = [
     '/_image_parcellation_path_..home..brainlab..Desktop..Rudas..Data..Parcellation..rsn_parcellations..Visual..Visual_parcellation_5.nii']
 number_regions = 5
 brain_states = ['Awake','Deep','Mild','Recovery']
+                # ['Recovery']
 
 
 for state in brain_states:
 
-    new_path_list = ['/home/user/Desktop/data_phi/Propofol/' + state + '/Auditory_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/CinguloOperc_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/Default_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/DorsalAttn_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/FrontoParietal_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/RetrosplenialTemporal_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/SMhand_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/SMmouth_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/VentralAttn_parcellation_5',
-                    '/home/user/Desktop/data_phi/Propofol/' + state + '/Visual_parcellation_5']
+    test_path = '/home/user/Desktop/data_phi/Propofol/task/' + state + '/'
+
+
+    sub_nums = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
+
+    for folder in rsn_path:
+        ts_list = []
+        for sub_num in sub_nums:
+            sub_path = test_path + 'Sub' + str(sub_num)
+            filepath = sub_path + folder + '/' + ts_name
+            ts = load_matrix(filepath)
+            timeSeries = ts[:, 0:number_regions].astype(np.float32)
+            ts_path = test_path + folder.split('.')[-2]
+            save_ts(timeSeries, ts_path, filepath, sub_num)
 
 
 
 
-    for fold in new_path_list:
-
-        save_path = fold + '/SbyS/'
-        makedir2(save_path)
-        ts = make_ts_array(fold)
-        empirical_tpm_concat_sbys(ts,save_path)
+    new_path_list = ['/home/user/Desktop/data_phi/Propofol/task/' + state + '/Auditory_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/CinguloOperc_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/Default_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/DorsalAttn_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/FrontoParietal_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/RetrosplenialTemporal_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/SMhand_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/SMmouth_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/VentralAttn_parcellation_5',
+                    '/home/user/Desktop/data_phi/Propofol/task/' + state + '/Visual_parcellation_5']

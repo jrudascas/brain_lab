@@ -46,7 +46,17 @@ def save_ts(ts, path_output, filepath, sub_num):
         if not file_exists(filename):
             np.savetxt(filename, ts, delimiter=default_delimiter, fmt=format)
 
-def save_tpm(tpm,path_output,num):
+
+def save_ts_all(ts, path_output,name='all'):
+    import numpy as np
+    if makedir2(path_output):
+        default_delimiter = ','
+        format = '%1.5f'
+        filename = path_output + '/' + 'ts_' + name + '.csv'
+        if not file_exists(filename):
+            np.savetxt(filename, ts, delimiter=default_delimiter, fmt=format)
+
+def save_tpm(tpm,path_output,num,perm=False):
     import numpy as np
     from nilearn import plotting
     import matplotlib.pyplot as plt
@@ -268,7 +278,27 @@ def empirical_tpm_concat(time_series,path_output):
 
     return tpm_list
 
-def make_ts_array(path,number_regions = 5):
+def cut_last_element(ts,length=143,nodes=5):
+    import numpy as np
+    ts2 = np.copy(ts)
+
+    ts_len_idx = ts2.shape[0] - 1
+
+    if ts2.shape[0] != length:
+        ts2 = np.delete(ts2,length,axis=0)
+        if ts2.shape[0] != length:
+            ts2 = np.delete(ts2,length,axis=0)
+            if ts2.shape[0] != length:
+                ts2 = np.delete(ts2, length,axis=0)
+                if ts2.shape[0] != length:
+                    ts2 = np.delete(ts2, length,axis=0)
+                    if ts2.shape[0] != length:
+                        ts2 = np.delete(ts2, length,axis=0)
+
+
+    return ts2
+
+def make_ts_array(path,number_regions = 5,resize=False):
     import os
     import numpy as np
     tup = ()
@@ -276,10 +306,27 @@ def make_ts_array(path,number_regions = 5):
         if file.endswith('.csv'):
             filepath = path + '/' + file
             ts = load_matrix(filepath)
+            if resize:
+                ts = cut_last_element(ts)
             timeSeries = ts[:, 0:number_regions].astype(np.float32)
             tup = tup + (timeSeries,)
 
-    return np.dstack(tup)
+    return np.concatenate(tup,axis=2)
+
+def make_ts_array2(path,number_regions = 5,resize=False):
+    import os
+    import numpy as np
+    lst = []
+    for file in os.listdir(path):
+        if file.endswith('.csv'):
+            filepath = path + '/' + file
+            ts = load_matrix(filepath)
+            if resize:
+                ts = cut_last_element(ts)
+            timeSeries = ts[:, 0:number_regions].astype(np.float32)
+            lst.append(timeSeries)
+
+    return lst
 
 def to_calculate_mean_phi(tpm, spin_mean,eps=None):
     import numpy as np
@@ -312,7 +359,7 @@ def to_calculate_mean_phi(tpm, spin_mean,eps=None):
 
     return np.mean(phi_values), phiSum
 
-def to_save_phi(phi , phiSum, num, path_output):
+def to_save_phi(phi, phiSum, num, path_output):
     import numpy as np
 
     default_delimiter = ','
@@ -376,3 +423,133 @@ def save_hubs(hub_list,path):
     if makedir2(path):
         if not file_exists(filename1+'.npy'):
             np.save(filename1,np.asarray([hub_list]))
+
+def empirical_tpm_concat_sbys(time_series,path_output):
+    import numpy as np
+
+    assert len(time_series.shape) == 3
+
+    tpm_list = []
+
+    tpm_count = 0
+
+    for i in range(time_series.shape[-1]):
+
+        new_ts = np.delete(time_series, i, axis=2)
+
+        big_ts_array = np.squeeze(np.concatenate(np.array((np.dsplit(new_ts, new_ts.shape[-1]))),axis=0))
+
+        tpm, state_total, frequency = main_tpm_branch(np.copy(big_ts_array))
+
+        # Normalizing respect to rows
+        for div in range(len(state_total)):
+            if state_total[div] != 0.0:
+                tpm[div, :] /= state_total[div]
+
+        tpm_list.append(tpm)
+        tpm_count += 1
+        save_tpm(tpm, path_output, tpm_count)
+        save_freq(frequency, path_output, tpm_count)
+        plot_ts_avg(big_ts_array, path_output=path_output, num=tpm_count)
+
+    return tpm_list
+
+def empirical_tpm_concat_sbys_2(time_series,path_output,all=False):
+    import numpy as np
+
+    tpm_list = []
+
+    tpm_count = 0
+
+    for i in range(len(time_series)):
+
+        if all is False:
+
+            new_ts = np.delete(np.asarray(time_series), i)
+
+            allArrays = np.empty((0, 5))
+
+            for k in range(new_ts.shape[0]):
+                myArray = np.squeeze(new_ts[k])
+                allArrays = np.append(allArrays, myArray, axis=0)
+        if all is True:
+            new_ts = np.array(time_series)
+
+            allArrays = np.empty((0, 5))
+
+            for k in range(new_ts.shape[0]):
+                myArray = np.squeeze(new_ts[k])
+                allArrays = np.append(allArrays, myArray, axis=0)
+
+        #big_ts_array = np.squeeze(np.concatenate(new_ts),axis=0)
+
+        tpm, state_total, frequency = main_tpm_branch(np.copy(allArrays))
+
+        # Normalizing respect to rows
+        for div in range(len(state_total)):
+            if state_total[div] != 0.0:
+                tpm[div, :] /= state_total[div]
+
+        tpm_list.append(tpm)
+        tpm_count += 1
+        save_tpm(tpm, path_output, tpm_count)
+        save_freq(frequency, path_output, tpm_count)
+        plot_ts_avg(allArrays, path_output=path_output, num=tpm_count)
+
+    return tpm_list
+
+def empirical_ts_concat(time_series,all=False):
+    import numpy as np
+
+    tpm_list = []
+
+    tpm_count = 0
+
+    for i in range(len(time_series)):
+
+        if all is False:
+
+            new_ts = np.delete(np.asarray(time_series), i)
+
+            allArrays = np.empty((0, 5))
+
+            for k in range(new_ts.shape[0]):
+                myArray = np.squeeze(new_ts[k])
+                allArrays = np.append(allArrays, myArray, axis=0)
+        if all is True:
+            new_ts = np.array(time_series)
+
+            allArrays = np.empty((0, 5))
+
+            for k in range(new_ts.shape[0]):
+                myArray = np.squeeze(new_ts[k])
+                allArrays = np.append(allArrays, myArray, axis=0)
+
+        #big_ts_array = np.squeeze(np.concatenate(new_ts),axis=0)
+
+        return allArrays
+
+def permutation_ts_tpm(big_ts,path_output,num_perm=100,num_nodes=5):
+    import numpy as np
+    assert len(big_ts.shape) == 2
+    if not big_ts.shape[0] > big_ts.shape[1]:
+        big_ts = big_ts.T
+
+    upper_bound = big_ts.shape[1]
+
+    for perm in range(num_perm):
+        rand_ind = np.random.randint(0, upper_bound, size=num_nodes)
+        lil_ts = big_ts[:, rand_ind]
+
+        tpm, state_total, frequency = main_tpm_branch(lil_ts)
+
+        # Normalizing respect to rows
+        for div in range(len(state_total)):
+            if state_total[div] != 0.0:
+                tpm[div, :] /= state_total[div]
+
+        save_tpm(tpm, path_output, perm)
+        save_freq(frequency, path_output, perm)
+        plot_ts_avg(lil_ts, path_output=path_output, num=perm)
+
+

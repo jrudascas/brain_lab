@@ -38,10 +38,10 @@ for condition in condition_list:
 
         print('Running for subject ', i + 1, 'in folder ', condition)
 
-        if not file_exists(subject_path+'DeltaXDeltaPY.csv'):
+        if not file_exists(subject_path+'DeltaXDeltaPX2.csv'):
 
-            filepathPos = subject_path + 'position_wavefunction_1d.npy'
-            filepathMom = subject_path + 'momentum_wavefunction.npy'
+            filepathPos = subject_path + 'position_wavefunction_1d_short.npy'
+            filepathMom = subject_path + 'momentum_wavefunction_short.npy'
 
             psi_x = np.squeeze(load_matrix(filepathPos))
 
@@ -67,7 +67,7 @@ for condition in condition_list:
 
                 #psi_p_small[t,:] = get_n_largest(psi_p[t,...].flatten())
 
-            momentum_prob = load_matrix(subject_path+'momentum_prob.csv')#get_probability(psi_p_small.T)
+            momentum_prob = load_matrix(subject_path+'momentum_prob_short.csv')#get_probability(psi_p_small.T)
 
             prob_deriv = prob_derivative(probability)
 
@@ -85,13 +85,13 @@ for condition in condition_list:
             uncertainty_x = dpx * dx
             uncertainty_y = dpy * dy
 
-            save_file(uncertainty_x, subject_path, 'DeltaXDeltaPX')
-            save_file(dx, subject_path, 'DeltaX')
-            save_file(dpx, subject_path, 'DeltaPX')
+            save_file(uncertainty_x, subject_path, 'DeltaXDeltaPX2')
+            save_file(dx, subject_path, 'DeltaX2')
+            save_file(dpx, subject_path, 'DeltaPX2')
 
-            save_file(uncertainty_y, subject_path, 'DeltaXDeltaPY')
-            save_file(dy, subject_path, 'DeltaY')
-            save_file(dpy, subject_path, 'DeltaPY')
+            save_file(uncertainty_y, subject_path, 'DeltaYDeltaPY2')
+            save_file(dy, subject_path, 'DeltaY2')
+            save_file(dpy, subject_path, 'DeltaPY2')
 
             del uncertainty_x,uncertainty_y,dpx,dpy,dy,dx,pxAvg,pyAvg,pxAvgSqr,pyAvgSqr,prob_deriv,momentum_prob
 
