@@ -48,6 +48,9 @@ def save_file(data,path,name):
     default_delimiter = ','
     format = '%1.5f'
 
+    if isinstance(data,list):
+        data = np.array(data)
+
     if len(data.shape) <= 2:
         file = path + str(name) + '.csv'
 

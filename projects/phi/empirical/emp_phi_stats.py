@@ -1,5 +1,3 @@
-# Auditory Network test. 13 subjects
-
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as ss

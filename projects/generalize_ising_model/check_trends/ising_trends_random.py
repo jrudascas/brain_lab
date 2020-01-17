@@ -4,7 +4,7 @@ from projects.generalize_ising_model.core import generalized_ising
 from projects.generalize_ising_model.tools.utils import to_save_results,to_generate_random_graph,to_normalize,save_graph
 
 sizes = [250,500]
-main_path = '/home/user/Desktop/Popiel/check_ising/'
+main_path = '/home/brainlab/Desktop/Popiel/check_ising/'
 temperature_params =[(1.3,200,50),(1.8,600,50)]# Params for 5,10,25,100 (-3,4,50),(-1,8,50),(0,12,50), (1,100,50),
 no_simulations = 4000
 thermalize_time =0.3
