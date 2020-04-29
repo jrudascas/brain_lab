@@ -1,43 +1,80 @@
 from projects.qm_brain.utils.utils import *
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from scipy.interpolate import griddata
-from scipy import sparse
-main_path = '/home/user/Desktop/QMBrain/New Data/'
+import time
+
+def get_probability(wavefun):
+
+    amplitude = np.abs(wavefun).T
+
+    ampMag = np.sqrt(np.sum((amplitude * amplitude).T, axis=0))
+
+    normAmp = (np.asarray(amplitude.T) / np.asarray(ampMag)).T
+
+    return normAmp * normAmp
+
+def get_n_largest(array,n=92):
+    ind = np.argpartition(np.abs(array), -n)[-n:]
+    return array[ind]
+
+
+main_path = '/home/user/Desktop/QMBrain/RestData/'
 
 filepathX = main_path + 'x_chanloc.csv'
 filepathY = main_path + 'y_chanloc.csv'
 
-x = load_matrix(filepathX)
-y = load_matrix(filepathY)
+x = norm_on_int_pi(load_matrix(filepathX))
+y = norm_on_int_pi(load_matrix(filepathY))
 
-x_inds = np.argsort(x)
-y_inds = np.argsort(y)
+coord_stack = zip_x_y(x,y)
 
-#grid_x, grid_y = np.mgrid[min(x):max(x):300j,min(y):max(y):200j]
+condition_list = ['/']#['Cond10/','Cond12/']
 
-condition_list = ['Cond10/','Cond12/']
 
-dim = np.stack((x_inds,y_inds))
 
 for condition in condition_list:
 
-    for i in range(3):
+    for i in range(13):
 
         subject_path = main_path + condition + str(i + 1) + '/'
 
-        if file_exists(subject_path + 'DeltaX.csv'):
+        save_path = subject_path + 'results/norm/'
 
-            print('Running for subject ', i+1, 'in folder ', condition)
+        print('Running for subject ', i + 1, 'in folder ', condition)
+
+        if not file_exists(save_path+'momentum_prob_short.csv'):
+            time0 = time.time()
 
             filepathData = subject_path + 'data.csv'
 
             data = load_matrix(filepathData)
-            new_dat = np.zeros(shape=(data.shape[1],data.shape[1],data.shape[0]))
-            #new_dat = griddata(np.stack((x,y)),data,(x,y))
-            for t in range(data.shape[0]):
-                new_dat[...,t] = sparse.coo_matrix((data[t,:],dim),(data.shape[1],data.shape[1])).A
 
-            print(new_dat.shape)
+            probability,wavefun = process_eeg_data2(data)
 
+            data = None
+            probability = None
+            del data,probability
+
+            # Here I need to discuss with Andrea about how to implement this new method
+            # Do I normalize the data and then transform to 2d? How do I proceed?
+
+            # Assuming I just convert normAmp and phase to 3d
+
+            psi = data_1d_to_2d(wavefun,x,y)
+
+            makedir2(save_path)
+
+            #save_file(psi,save_path,'position_wavefunction')
+
+
+            psi_p_small = np.zeros(shape=(psi_p.shape[0], psi_p.shape[1]), dtype=np.complex64)
+
+            for t in range(psi_p.shape[0]):
+                psi_p_small[t, :] = get_n_largest(psi_p[t, ...].flatten())
+
+            momentum_prob = get_probability(psi_p_small.T)
+
+            save_file(momentum_prob,save_path,'momentum_prob_short')
+            print('Time: ',time.time()-time0)
+
+        else:
+            print('Already Done!')

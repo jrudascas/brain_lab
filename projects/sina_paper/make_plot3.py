@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from projects.qm_brain.utils.utils import load_matrix
 from matplotlib.ticker import ScalarFormatter,AutoMinorLocator
+from projects.phi.tools.utils import save_list
+import seaborn as sns
+import pandas as pd
 
 def get_axis_limits(ax, scale=.9):
     return ax.get_xlim()[1]*scale, ax.get_ylim()[1]*scale
@@ -202,6 +205,35 @@ avg_tot_phi_sus = np.delete(avg_tot_phi_sus,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,
 std_tot_phi_sus = np.delete(std_tot_phi_sus,[96,97,98,99])
 std_tot_phi_sus = np.delete(std_tot_phi_sus,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
 
+dict = {'T':T,
+        'mag':avg_tot_mag,
+        'energy':avg_E,
+        'phi':avg_tot_phi,
+        'heat':avg_tot_heat,
+        'susc':avg_tot_susc,
+        'phi_susc':avg_tot_phi_sus,
+        'std_mag':std_tot_mag,
+        'std_energy':std_E,
+        'std_phi':std_tot_phi,
+        'std_heat':std_tot_heat,
+        'std_susc':std_tot_susc,
+        'std_phi_susc':std_tot_phi_sus}
+
+save_path = '/home/user/Desktop/save_emergence_paper/'
+default_delimiter = ','
+format = '%1.5f'
+
+for key in dict:
+    np.savetxt(save_path + key + '.csv', np.asarray(dict[key]), delimiter=default_delimiter, fmt=format)
+
+
+
+
+
+df = pd.DataFrame(dict)
+
+
+sns.set(style="white", palette="muted", color_codes=True)
 
 plt.close()
 fig, axs = plt.subplots(3,2)
@@ -216,59 +248,60 @@ ax5 = axs[2,1]
 x_tickss = [0.1,0.5,1,2,3,4]
 
 
-ax0.scatter(T,avg_tot_mag,color='k',marker='o')
+sns.relplot(x='T',y='mag',data=df,ax=ax0)
 ax0.fill_between(T, avg_tot_mag - std_tot_mag, avg_tot_mag + std_tot_mag,
                  color='gray', alpha=0.2)
-ax0.semilogx()
-ax0.set_xticks(x_tickss)
-ax0.set_title(r'$\bar{M}$')
-ax0.annotate('A',xy=(0.11,1))
+# ax0.semilogx()
+# ax0.set_xticks(x_tickss)
+# ax0.set_title(r'$\bar{M}$')
+# ax0.annotate('A',xy=(0.11,1))
 
-ax1.scatter(T,avg_E,color='k',marker='o')
+sns.relplot(x='T',y='energy',data=df,ax=ax1)
 ax1.fill_between(T, avg_E - std_E, avg_E + std_E,
                  color='gray', alpha=0.2)
-ax1.semilogx()
-ax1.set_xticks(x_tickss)
-ax1.set_title(r'$\bar{E}$')
-ax1.annotate('B',xy=(0.11,-0.27))
+# ax1.semilogx()
+# ax1.set_xticks(x_tickss)
+# ax1.set_title(r'$\bar{E}$')
+# ax1.annotate('B',xy=(0.11,-0.27))
 
-ax2.scatter(T2,avg_tot_phi,color='k',marker='o')
+sns.relplot(x='T',y='phi',data=df,ax=ax2)
 ax2.fill_between(T2, avg_tot_phi - std_tot_phi, avg_tot_phi + std_tot_phi,
                  color='gray', alpha=0.2)
-ax2.semilogx()
-ax2.set_xticks(x_tickss)
-ax2.set_title(r'$\bar{\Phi}$')
-ax2.annotate('C',xy=(0.11,3))
+# ax2.semilogx()
+# ax2.set_xticks(x_tickss)
+# ax2.set_title(r'$\bar{\Phi}$')
+# ax2.annotate('C',xy=(0.11,3))
 
-ax3.scatter(T,avg_tot_susc,color='k',marker='o')
+sns.relplot(x='T',y='susc',data=df,ax=ax3)
 ax3.fill_between(T, avg_tot_susc - std_tot_susc, avg_tot_susc + std_tot_susc,
                  color='gray', alpha=0.2)
-ax3.semilogx()
-ax3.set_xticks(x_tickss)
-ax3.set_title(r'$\bar{\chi}$')
-ax3.annotate('D',xy=(0.11,0.07))
+# ax3.semilogx()
+# ax3.set_xticks(x_tickss)
+# ax3.set_title(r'$\bar{\chi}$')
+# ax3.annotate('D',xy=(0.11,0.07))
 
-ax4.scatter(T,avg_tot_heat,color='k',marker='o')
+sns.relplot(x='T',y='heat',data=df,ax=ax4)
 ax4.fill_between(T, avg_tot_heat - std_tot_heat, avg_tot_heat + std_tot_heat,
                  color='gray', alpha=0.2)
-ax4.semilogx()
-ax4.set_xticks(x_tickss)
-ax4.set_title(r'$\bar{C}_v$')
-ax4.annotate('E',xy=(0.11,0.1))
+# ax4.semilogx()
+# ax4.set_xticks(x_tickss)
+# ax4.set_title(r'$\bar{C}_v$')
+# ax4.annotate('E',xy=(0.11,0.1))
 
-ax5.scatter(T2,avg_tot_phi_sus,color='k',marker='o')
+sns.relplot(x='T',y='phi_susc',data=df,ax=ax5)
 ax5.fill_between(T2, avg_tot_phi_sus - std_tot_phi_sus, avg_tot_phi_sus + std_tot_phi_sus,
                  color='gray', alpha=0.2)
-ax5.semilogx()
-ax5.set_xticks(x_tickss)
-ax5.set_title(r'$\bar{\chi}_{\Phi}$')
-ax5.annotate('F',xy=(0.11,0.11))
+# ax5.semilogx()
+# ax5.set_xticks(x_tickss)
+# ax5.set_title(r'$\bar{\chi}_{\Phi}$')
+# ax5.annotate('F',xy=(0.11,0.11))
 
 fig.suptitle('Order and Susceptibility',fontsize=20)
 fig.set_size_inches(18.5, 10.5)
 plt.savefig(directory + 'plot_notnorm.pdf', dpi=600)
 
 plt.show()
+'''
 
 plt.close()
 fig, axs = plt.subplots(3,2)
@@ -339,3 +372,4 @@ plt.savefig(directory + 'plot_fig2.pdf', dpi=600)
 
 plt.show()
 
+'''

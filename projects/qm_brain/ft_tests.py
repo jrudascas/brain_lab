@@ -1,5 +1,6 @@
 from projects.qm_brain.utils.utils import *
 import numpy as np
+import time
 
 def get_probability(wavefun):
 
@@ -16,7 +17,7 @@ def get_n_largest(array,n=92):
     return array[ind]
 
 
-main_path = '/home/user/Desktop/QMBrain/New Data/'
+main_path = '/home/user/Desktop/QMBrain/nyc_data/'
 
 filepathX = main_path + 'x_chanloc.csv'
 filepathY = main_path + 'y_chanloc.csv'
@@ -32,17 +33,24 @@ condition_list = ['Cond10/','Cond12/']
 
 for condition in condition_list:
 
-    for i in range(14):
+    for i in range(13):
 
         subject_path = main_path + condition + str(i + 1) + '/'
 
-        save_path = subject_path + 'results/'
+        saveroo = subject_path + 'results/'
+
+        makedir2(saveroo)
+
+        save_path = saveroo + 'norm/'
+
+        makedir2(save_path)
 
         print('Running for subject ', i + 1, 'in folder ', condition)
 
-        if not file_exists(save_path+'momentum_prob_short.csv'):
+        if not file_exists(save_path+'momentum_prob_short2.csv'):
+            time0 = time.time()
 
-            filepathData = subject_path + 'data_short.csv'
+            filepathData = subject_path + 'data.csv'
 
             data = load_matrix(filepathData)
 
@@ -80,7 +88,8 @@ for condition in condition_list:
 
             momentum_prob = get_probability(psi_p_small.T)
 
-            save_file(momentum_prob,save_path,'momentum_prob_short')
+            save_file(momentum_prob,save_path,'momentum_prob_short2')
+            print('Time: ',time.time()-time0)
 
         else:
             print('Already Done!')

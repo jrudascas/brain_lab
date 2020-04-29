@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import scipy.stats as ss
 from projects.phi.tools.utils import *
 
-path_for_baseline = '/home/user/Desktop/data_phi/Propofol/Baseline'
-save_path = '/home/user/Desktop/data_phi/Propofol/'
+path_for_baseline = '/home/user/Desktop/data_phi/Propofol/task/Baseline'
+save_path = '/home/user/Desktop/data_phi/Propofol/task/'
 
 states = ['Awake','Mild','Deep','Recovery']
 state_pos = np.arange(len(states))
@@ -34,7 +34,7 @@ name_for_plotting = ['Auditory', 'DMN','Dorsal','Ventral','Cingulate', 'Frontopa
 
 for idx,network in enumerate(networks):
 
-    mainPath = '/home/user/Desktop/data_phi/phi/' + network + '/SbyS/'
+    mainPath = '/home/user/Desktop/data_phi/phi/' + network + '/SbyS/task/'
 
     phiList,phiSumList =[],[]
 
@@ -66,6 +66,6 @@ for idx,network in enumerate(networks):
     plt.title('$\Phi$ vs Conscious State in the' + name_for_plotting[idx] +' Network')
     plt.xlabel('Brain State')
     plt.ylabel('Phi')
-    plt.ylim([0,0.7])
+    plt.ylim([0,1])
     plt.xticks(state_pos,states)
     plt.savefig(save_path+network+'.png',dpi=600)

@@ -8,7 +8,7 @@ brain_states = ['Awake','Deep','Mild','Recovery']
 num_perm = 100
 num_nodes = 5
 
-main_path = '/home/user/Desktop/data_phi/Propofol/Baseline/'
+main_path = '/home/user/Desktop/data_phi/Propofol/task/Baseline/'
 
 
 for state in brain_states:

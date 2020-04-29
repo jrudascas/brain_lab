@@ -129,6 +129,23 @@ def animate_anigreat(max_ind,xIn,yIn,sub_num,cond,numtime=300):
     bashCommand = "convert -delay 10 *.png "+ str(sub_num)+"_"+str(cond)+"_fig.gif"
     os.system(bashCommand)
 
+def animate_anigreat_w_velocity(xAvg,yAvg,xIn,yIn,v_tot,sub_num,cond,numtime=300):
+    plt.close()
+    norm_v = v_tot/np.max(v_tot)
+    for i in range(numtime):
+        fig = plt.figure(figsize=(480/96, 480 / 96), dpi=96)
+        plt.scatter(xIn,yIn,alpha=0.4,color='k')
+        plt.scatter(xAvg[i], yAvg[i],edgecolors="grey", linewidth=2,c=norm_v[i],cmap='plasma')
+        plt.colorbar()
+        plt.xlim(-10, 10)
+        plt.ylim(-8, 8)
+        filename = 'step' + str(i) + '.png'
+        plt.savefig(filename, dpi=96)
+        plt.gca()
+        plt.close(fig)
+    bashCommand = "convert -delay 10 *.png "+ str(sub_num)+"_"+str(cond)+"_fig.gif"
+    os.system(bashCommand)
+
 def animation_station(xAvg,yAvg,xIn,yIn,xerr,yerr):
     for i in range(300):
         fig = plt.figure(figsize=(480/96, 480 / 96), dpi=96)

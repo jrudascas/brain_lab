@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 num_subjects = 13
-main_path = '/home/user/Desktop/QMBrain/RestData/'
+main_path = '/home/user/Desktop/QMBrain/new_movie/'
 
 filepathX = main_path + 'x_chanloc.csv'
 filepathY = main_path + 'y_chanloc.csv'

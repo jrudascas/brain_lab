@@ -1,7 +1,7 @@
 from projects.qm_brain.utils.utils import *
 import numpy as np
 
-main_path = '/home/user/Desktop/QMBrain/RestData/'
+main_path = '/home/user/Desktop/QMBrain/new_movie/'
 num_sub = 13
 
 for sub in range(num_sub):

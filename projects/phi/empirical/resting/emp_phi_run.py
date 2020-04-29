@@ -53,12 +53,12 @@ for network in networks:
     tpm_deep = load_matrix('/home/user/Desktop/data_phi/phi/Deep/SbyS/' + network + '/Deeptpm.npy')
     tpm_recovery = load_matrix('/home/user/Desktop/data_phi/phi/Recovery/SbyS/' + network + '/Recoverytpm.npy')
 
-    freq_awake = load_matrix('/home/user/Desktop/data_phi/phi/Awake/' + network + '/Awakefreq.csv')
-    freq_mild = load_matrix('/home/user/Desktop/data_phi/phi/Mild/' + network + '/Mildfreq.csv')
-    freq_deep = load_matrix('/home/user/Desktop/data_phi/phi/Deep/' + network + '/Deepfreq.csv')
-    freq_recovery = load_matrix('/home/user/Desktop/data_phi/phi/Recovery/' + network + '/Recoveryfreq.csv')
+    freq_awake = load_matrix('/home/user/Desktop/data_phi/phi/Awake/SbyS/' + network + '/Awakefreq.csv')
+    freq_mild = load_matrix('/home/user/Desktop/data_phi/phi/Mild/SbyS/' + network + '/Mildfreq.csv')
+    freq_deep = load_matrix('/home/user/Desktop/data_phi/phi/Deep/SbyS/' + network + '/Deepfreq.csv')
+    freq_recovery = load_matrix('/home/user/Desktop/data_phi/phi/Recovery/SbyS/' + network + '/Recoveryfreq.csv')
 
-    save_path_phi = main_path + network + '/SbyS/'
+    save_path_phi = main_path + network + '/SbyS2/'
 
     makedir2(save_path_phi)
 

@@ -2,8 +2,8 @@ from projects.qm_brain.utils.utils import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-num_subjects = 15
-main_path = '/home/user/Desktop/QMBrain/New Data/'
+num_subjects = 13
+main_path = '/home/user/Desktop/QMBrain/new_movie/'
 
 filepathX = main_path + 'x_chanloc.csv'
 filepathY = main_path + 'y_chanloc.csv'

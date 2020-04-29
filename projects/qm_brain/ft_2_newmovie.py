@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
 from projects.qm_brain.utils.utils import *
 import numpy as np
-import time
+import matplotlib.pyplot as plt
 
 def get_probability(wavefun):
 
@@ -18,7 +17,7 @@ def get_n_largest(array,n=92):
     return array[ind]
 
 
-main_path = '/home/user/Desktop/QMBrain/RestData/'
+main_path = '/home/user/Desktop/QMBrain/new_movie/'
 
 filepathX = main_path + 'x_chanloc.csv'
 filepathY = main_path + 'y_chanloc.csv'
@@ -28,7 +27,7 @@ y = norm_on_int_pi(load_matrix(filepathY))
 
 coord_stack = zip_x_y(x,y)
 
-condition_list = ['/']#['Cond10/','Cond12/']
+condition_list = ['/']#'['Cond10/','Cond12/']
 
 
 
@@ -43,9 +42,8 @@ for condition in condition_list:
         print('Running for subject ', i + 1, 'in folder ', condition)
 
         if not file_exists(save_path+'momentum_prob_short2.csv'):
-            time0 = time.time()
 
-            filepathData = subject_path + 'data_short.csv'
+            filepathData = subject_path + 'data.csv'
 
             data = load_matrix(filepathData)
 
@@ -62,20 +60,21 @@ for condition in condition_list:
 
             psi = data_1d_to_2d(wavefun,x,y)
 
+            wavefun=None
+            del wavefun
+
             # probability_conservation_plot(len(x),probability)
 
             momentum_wavefunction = fft_time_warp(coord_stack,psi)
 
+            #plt.imshow(momentum_wavefunction[:,:,50])
 
+            makedir2(save_path)
 
-            psi_x = psi
-
+            #save_file(psi,save_path,'position_wavefunction')
             psi_p = momentum_wavefunction
-
-
-            pos_wavefun = data_1d_to_2d(psi_x,x,y)
-
-            # Determine the 92 best points
+            del psi,momentum_wavefunction
+            #save_file(momentum_wavefunction,save_path,'momentum_wavefunction')
 
             psi_p_small = np.zeros(shape=(psi_p.shape[0], psi_p.shape[1]), dtype=np.complex64)
 
@@ -84,4 +83,7 @@ for condition in condition_list:
 
             momentum_prob = get_probability(psi_p_small.T)
 
-            prob_deriv = prob_derivative(probability)
+            save_file(momentum_prob,save_path,'momentum_prob_short2')
+
+        else:
+            print('Already Done!')
