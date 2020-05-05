@@ -50,7 +50,7 @@ class ExtractConfounds(BaseInterface):
             extra_confounds = np.loadtxt(self.inputs.file_concat, delimiter=delimiter)
 
             if extra_confounds.shape[0] != ev.shape[0]:
-                if len(artifact_volumens) != 0:
+                if artifact_volumens.size != 0:
                     extra_confounds = np.delete(extra_confounds, artifact_volumens, axis=0)
                 else:
                     raise Exception("Errorrrr")

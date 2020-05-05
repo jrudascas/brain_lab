@@ -22,7 +22,7 @@ class ArtifacRemotion(BaseInterface):
         data = img.get_data()
 
         artifact_volumens = np.loadtxt(self.inputs.outlier_files, dtype=int)
-        if len(artifact_volumens) != 0:
+        if artifact_volumens.size != 0:
             data_artifact_removed = np.delete(data, artifact_volumens, axis=-1)
         else:
             data_artifact_removed = data

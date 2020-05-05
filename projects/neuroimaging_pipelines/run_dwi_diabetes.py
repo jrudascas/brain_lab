@@ -1,6 +1,6 @@
 from projects.neuroimaging_pipelines.pipeline import PipelineDWI
 
-paths = {'input_path': '/home/brainlab/Desktop/Pubu/test_dwi',
+paths = {'input_path': '/home/brainlab/Desktop/Nichols/DMR_MRIdata',
          'image_parcellation_path': [
              '/home/brainlab/Desktop/Rudas/Data/Parcellation/rsn_parcellations/Auditory/Auditory_parcellation_5.nii',
              '/home/brainlab/Desktop/Rudas/Data/Parcellation/rsn_parcellations/CinguloOperc/CinguloOperc_parcellation_5.nii',
@@ -17,33 +17,39 @@ paths = {'input_path': '/home/brainlab/Desktop/Pubu/test_dwi',
          'template_spm_path': '/home/brainlab/Desktop/Rudas/Data/Parcellation/TPM.nii',
          'mcr_path': '/home/brainlab/Desktop/Rudas/Tools/MCR/v713',
          'spm_path': '/home/brainlab/Desktop/Rudas/Tools/spm12_r7487/spm12/run_spm12.sh',
-         't1_relative_path': 'data/T1w/T1w_acpc_dc_restore_1.25.nii.gz',
-         'dwi_relative_path': 'data/T1w/Diffusion/data.nii.gz',
-         'bvec_relative_path': 'data/T1w/Diffusion/bvecs',
-         'bval_relative_path': 'data/T1w/Diffusion/bvals'}
+         't1_relative_path': 'data.nii',
+         'dwi_relative_path': 'dwi/dwi_data.nii.gz',
+         'bvec_relative_path': 'dwi/bvec',
+         'bval_relative_path': 'dwi/bval'}
 
-parameters = {'iso_size': 2}
+parameters = {'iso_size': 1.5}
 
-subject_list = ['103414']
-                #'857263_3T_Diffusion_preproc',
-                #'856766_3T_Diffusion_preproc',
-                #'792564_3T_Diffusion_preproc',
-                #'756055_3T_Diffusion_preproc',
-                #'751348_3T_Diffusion_preproc',
-                #'672756_3T_Diffusion_preproc',
-                #'654754_3T_Diffusion_preproc',
-                #'499566_3T_Diffusion_preproc',
-                #'414229_3T_Diffusion_preproc',
-                #'397760_3T_Diffusion_preproc',
-                #'366446_3T_Diffusion_preproc',
-                #'298051_3T_Diffusion_preproc',
-                #'280739_3T_Diffusion_preproc']
-                #'211720_3T_Diffusion_preproc']
-                #'245333_3T_Diffusion_preproc',
-                #'239944_3T_Diffusion_preproc',
-                #'221319_3T_Diffusion_preproc',
-                #'214423_3T_Diffusion_preproc',
-                #'212318_3T_Diffusion_preproc']
+subject_list = ['c001'
+                'c002',
+                'c005',
+                'c006',
+                'c007',
+                'c008',
+                'c009',
+                'c010',
+                'c012',
+                'c013',
+                'c015',
+                'c016',
+                'c017',
+                'c018',
+                'c019',
+                's002',
+                's005',
+                's006',
+                's009',
+                's011',
+                's017',
+                's018',
+                's019',
+                's020',
+                'si006',
+                'si009']
 
 pipeline = PipelineDWI(paths=paths, parameters=parameters, subject_list=subject_list)
 pipeline.run()
